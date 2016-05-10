@@ -72,5 +72,18 @@ feature 'booking a visit', type: :feature do
     # Visit status page again and expect cancellation text
     visit status_url
     expect(page).to have_content 'You cancelled this visit request'
+
+    # Fetch the new booking email sent to booking staff
+    # No need to retry – presumably this email will have been received since
+    # we've waited for the public email.
+    # TODO: Make Visitor name dynamic so that this matches one email
+    staff_email = Mailtrap.instance.search_messages('Visit request for George Best').first
+    # Sanity check that we've got the right email
+    expect(staff_email.text_body).to match(visit_id)
+    process_url = staff_email.capybara.find_link('Process the booking')[:href]
+
+    # Staff processing page
+    visit process_url
+    expect(page).to have_content 'The visitor has withdrawn this request'
   end
 end
