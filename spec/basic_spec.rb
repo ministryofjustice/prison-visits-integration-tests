@@ -17,7 +17,7 @@ feature 'booking a visit', type: :feature do
     Visitor.new(
       'Peter', 'Sellers',
       Date.parse('1925-09-08'),
-      "#{SecureRandom.uuid}@example.com",
+      "#{SecureRandom.uuid}@email.prisonvisits.service.gov.uk",
       '0123456789'
     )
   end
