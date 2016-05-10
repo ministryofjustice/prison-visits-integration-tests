@@ -23,8 +23,10 @@ feature 'booking a visit', type: :feature do
   end
 
   scenario 'making a booking, then cancelling it immediately' do
+    start_page = ENV.fetch('START_PAGE')
+
     # Booking: Step 1 (prisoner)
-    visit 'http://localhost:4000/en/request'
+    visit start_page
     expect(page).to have_content 'Who are you visiting?'
     fill_in_prisoner_step(prisoner)
     click_button 'Continue'
