@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'securerandom'
 
 describe 'booking a visit', type: :feature do
   let(:prisoner) do
@@ -16,7 +17,7 @@ describe 'booking a visit', type: :feature do
     Visitor.new(
       'Peter', 'Sellers',
       Date.parse('1925-09-08'),
-      'peter@example.com',
+      "#{SecureRandom.uuid}@example.com",
       '0123456789'
     )
   end
@@ -49,5 +50,23 @@ describe 'booking a visit', type: :feature do
 
     # Helpful for debugging
     # save_screenshot('confirmation.png')
+
+    # Fetch 'booking requested' email sent to prisoner
+    # Tends to take ~ 2s locally for emails to be delivered and available via
+    # API, so being generous to avoid false positives
+    emails = retry_for(10, ->(emails) { emails.any? }) {
+      Mailtrap.instance.search_messages(visitor.email)
+    }
+    # Since the email is unique only a single email should have been returned
+    expect(emails.size).to eq(1)
+    email = emails.first
+    status_url = email.capybara.find_link('visit status page')[:href]
+
+    # Extract visit_id for use later
+    visit_id = status_url.split('/').last
+
+    # Status page
+    visit status_url
+    expect(page).to have_content 'Your visit is not booked yet'
   end
 end

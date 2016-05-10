@@ -10,3 +10,5 @@ Capybara.register_driver :poltergeist do |app|
 end
 
 require_relative 'helpers/step_helper'
+require_relative 'helpers/retry_helper'
+require_relative 'lib/mailtrap'
