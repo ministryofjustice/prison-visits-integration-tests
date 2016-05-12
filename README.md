@@ -29,3 +29,8 @@ API token for Mailtrap, used to fetch email via the API.
 
 ### `START_PAGE`
 This should be the start page for creating a new booking. In development this would be set to `http://localhost:4000/en/request`.
+
+## Docker build
+
+	docker build -t pvb-integration .
+	docker run --env-file=.env pvb-integration
