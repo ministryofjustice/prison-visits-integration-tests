@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'securerandom'
 
-feature 'booking a visit', type: :feature do
+RSpec.feature 'booking a visit', type: :feature do
   let(:prisoner) do
     # Trivia: George Best spent 7 days imprisoned in Pentonville for driving
     # under alcohol and assault [wikipedia]

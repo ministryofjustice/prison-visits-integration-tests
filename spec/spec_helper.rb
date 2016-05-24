@@ -14,6 +14,10 @@ Capybara.register_driver :poltergeist do |app|
     app, phantomjs_logger: SuppressJsConsoleLogging
 end
 
+RSpec.configure do |config|
+  config.disable_monkey_patching!
+end
+
 require_relative 'helpers/step_helper'
 require_relative 'helpers/retry_helper'
 require_relative 'lib/mailtrap'
