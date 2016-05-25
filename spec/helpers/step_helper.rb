@@ -1,6 +1,19 @@
 Prisoner = Struct.new(:first_name, :last_name, :dob, :number, :prison)
 Visitor = Struct.new(:first_name, :last_name, :dob, :email, :phone)
 
+def make_booking(prisoner, visitor)
+  start_page = ENV.fetch('START_PAGE')
+
+  visit start_page
+  fill_in_prisoner_step(prisoner)
+  click_button 'Continue'
+  fill_in_visitor_step(visitor)
+  click_button 'Continue'
+  fill_in_slots_step
+  click_button 'Continue'
+  click_button 'Send request'
+end
+
 def fill_in_prisoner_step(prisoner)
   fill_in 'Prisoner first name', with: prisoner.first_name
   fill_in 'Prisoner last name', with: prisoner.last_name
@@ -39,4 +52,8 @@ end
 
 def click_first_available_time
   all('.SlotPicker-label').first.click
+end
+
+def email_link_href(email, link_text)
+  email.capybara.find_link(link_text).native.attributes['href'].value
 end
