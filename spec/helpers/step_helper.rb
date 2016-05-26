@@ -2,6 +2,9 @@ Prisoner = Struct.new(:first_name, :last_name, :dob, :number, :prison)
 Visitor = Struct.new(:first_name, :last_name, :dob, :email, :phone)
 
 def make_booking(prisoner, visitor)
+  # In CI the driver is rack-test, attempt to fix that
+  Capybara.current_driver = :poltergeist
+
   start_page = ENV.fetch('START_PAGE')
 
   visit start_page
