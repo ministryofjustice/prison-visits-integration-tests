@@ -50,8 +50,7 @@ RSpec.feature 'process a booking', type: :feature do
     fill_in 'Reference number', with: '12345678'
 
     click_button 'Send email'
-    puts prisoner
-    confirmation_email = retry_for(10, ->(email) { email }) {
+    confirmation_email = retry_for(20, ->(email) { email }) {
       Mailtrap.instance.search_messages(visitor.email).find do |email|
         email.subject =~ /^Visit confirmed/
       end
