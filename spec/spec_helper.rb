@@ -2,7 +2,7 @@ require 'capybara/rspec'
 require 'capybara/poltergeist'
 require 'capybara-screenshot/rspec'
 
-Capybara.current_driver = :poltergeist
+Capybara.default_driver = :poltergeist
 
 # This results in a depreciated warning, however it's required for now
 # https://github.com/mattheworiordan/capybara-screenshot/issues/170

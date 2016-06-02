@@ -51,16 +51,13 @@ RSpec.feature 'process a booking', type: :feature do
 
     click_button 'Send email'
 
-    # The step below the sleep fails interminently, attempt to fix this with a
-    # hard sleep as I have already increased the retries from 10s to 20s.
-    sleep(1)
-    confirmation_email = retry_for(20, ->(email) { email }) {
-      # Log how many messages the API is returning to help debugging intermitent
-      # issues.
-      STDOUT.puts "Matched messages: #{Mailtrap.instance.search_messages(visitor.email)}"
-      Mailtrap.instance.search_messages(visitor.email).find do |email|
-        email.subject =~ /^Visit confirmed/
-      end
+    confirmation_email = retry_for(30, ->(email) { email }) {
+      visitor_emails = Mailtrap.instance.search_messages(visitor.email)
+      
+      # Log messages returned by the API to aid debugging
+      puts "Matched email subjects: #{visitor_emails.map(&:subject)}"
+
+      visitor_emails.find { |email| email.subject =~ /^Visit confirmed/ }
     }
 
     cancel_url = email_link_href(confirmation_email, 'you can cancel this visit')

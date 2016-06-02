@@ -24,11 +24,16 @@ When configuring SMTP (get the credentials by logging into mailtrap), note that 
 
 I recommend copying `.env.example` to `.env` and using direnv to automatically load these configuration variables (`brew install direnv`).
 
+See `.env.example` for default development configuration.
+
 ### `MAILTRAP_API_TOKEN`
 API token for Mailtrap, used to fetch email via the API.
 
 ### `START_PAGE`
-This should be the start page for creating a new booking. In development this would be set to `http://localhost:4000/en/request`.
+This should be the start page for creating a new booking.
+
+### `PRISON_START_PAGE`
+This should be the index page of prisons used by staff.
 
 ## Docker build
 
