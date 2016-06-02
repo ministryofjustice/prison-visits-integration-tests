@@ -45,10 +45,9 @@ RSpec.feature 'booking a visit', type: :feature do
     expect(page).to have_content 'Check your request'
     click_button 'Send request'
 
-    # Booking: Step 5 (confirmation)
+    # Redirect to visit show page
     expect(page).to have_content 'Your request is being processed'
     expect(page).to have_content prisoner.prison
-    expect(page).to have_content visitor.email
 
     # Fetch 'booking requested' email sent to prisoner
     # Tends to take ~ 2s locally for emails to be delivered and available via
@@ -68,7 +67,7 @@ RSpec.feature 'booking a visit', type: :feature do
     visit status_url
     expect(page).to have_content 'Your visit is not booked yet'
     check 'Yes, I want to cancel this visit'
-    click_button 'Cancel request'
+    click_button 'Cancel visit'
     expect(page).to have_content 'You cancelled this visit request'
 
     # Visit status page again and expect cancellation text
