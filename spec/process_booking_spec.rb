@@ -51,7 +51,9 @@ RSpec.feature 'process a booking', type: :feature do
 
     click_button 'Send email'
 
-    confirmation_email = retry_for(30, ->(email) { email }) {
+    expect(page).to have_content('A confirmation email has been sent')
+
+    confirmation_email = retry_for(120, ->(email) { email }) {
       visitor_emails = Mailtrap.instance.search_messages(visitor.email)
       
       # Log messages returned by the API to aid debugging
