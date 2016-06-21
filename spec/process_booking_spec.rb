@@ -34,10 +34,13 @@ RSpec.feature 'process a booking', type: :feature do
     prison_start_page = ENV.fetch('PRISON_START_PAGE')
 
     visit prison_start_page
-    click_link 'Pentonville'
+
+    fill_in 'Email', with: ENV.fetch('EMAIL')
+    fill_in 'Password', with: ENV.fetch('PASSWORD')
+    click_button 'Sign in'
 
     # The most recent requested visit
-    find('table:last-child tbody tr:last-child').click
+    all('table:last-child tbody tr:not(.hidden-row)').last.click_link('View')
 
     expect(page).to have_content(prisoner_first_name)
     expect(page).to have_content(prisoner_last_name)
@@ -50,7 +53,7 @@ RSpec.feature 'process a booking', type: :feature do
 
     click_button 'Send email'
 
-    expect(page).to have_content('a confirmation email has been sent')
+    expect(page).to have_content('Thank you for processing the visit')
 
     confirmation_email = retry_for(120, ->(email) { email }) {
       visitor_emails = Mailtrap.instance.search_messages(visitor.email)
