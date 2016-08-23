@@ -33,8 +33,9 @@ RSpec.feature 'process a booking', type: :feature do
   scenario 'accept booking, then visitor cancels' do
     prison_start_page = ENV.fetch('PRISON_START_PAGE')
 
+    # Visiting prison inbox redirects to Sign On page
     visit prison_start_page
-
+    expect(page).to have_content('Sign On')
     fill_in 'Email', with: ENV.fetch('EMAIL')
     fill_in 'Password', with: ENV.fetch('PASSWORD')
     click_button 'Sign in'
