@@ -11,7 +11,7 @@ RSpec.feature 'process a booking', type: :feature do
       prisoner_first_name, prisoner_last_name,
       Date.parse('1970-01-01'), # Actually 1946-05-22
       'A1234BC',
-      'Pentonville'
+      'Swansea'
     )
   end
 
@@ -24,7 +24,7 @@ RSpec.feature 'process a booking', type: :feature do
     )
   end
 
-  let(:prison_email) { 'socialvisits.pentonville@hmps.gsi.gov.uk' }
+  let(:prison_email) { 'socialvisits.swansea@hmps.gsi.gov.uk' }
 
   before do
     make_booking(prisoner, visitor)
@@ -69,7 +69,7 @@ RSpec.feature 'process a booking', type: :feature do
     expect(page).to have_content('Your visit has been confirmed')
     check 'Yes, I want to cancel this visit'
     click_button 'Cancel visit'
-    expect(page).to have_content('You cancelled this visit')
+    expect(page).to have_content('Your visit is cancelled')
 
     retry_for(10, ->(email) { email }) {
       Mailtrap.instance.search_messages(prison_email).find do |email|
