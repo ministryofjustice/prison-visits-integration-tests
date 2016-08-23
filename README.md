@@ -35,6 +35,9 @@ This should be the start page for creating a new booking.
 ### `PRISON_START_PAGE`
 This should be the index page of prisons used by staff.
 
+### `EMAIL` & `PASSWORD`
+Staff login details (for single sign on).
+
 ## Docker build
 
 	docker build -t pvb-integration .
