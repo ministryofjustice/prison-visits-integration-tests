@@ -11,7 +11,7 @@ Capybara.save_and_open_page_path = File.expand_path('../screenshots', __dir__)
 module SuppressJsConsoleLogging; end
 Capybara.register_driver :poltergeist do |app|
   Capybara::Poltergeist::Driver.new \
-    app, phantomjs_logger: SuppressJsConsoleLogging
+    app, phantomjs_logger: SuppressJsConsoleLogging, js_errors: false
 end
 
 RSpec.configure do |config|
