@@ -20,7 +20,7 @@ RSpec.feature 'process a booking', type: :feature do
       'Peter', 'Sellers',
       Date.parse('1925-09-08'),
       "#{SecureRandom.uuid}@email.prisonvisits.service.gov.uk",
-      '0123456789'
+      '079 00112233'
     )
   end
 
