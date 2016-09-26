@@ -11,7 +11,7 @@ RSpec.feature 'process a booking', type: :feature do
       prisoner_first_name, prisoner_last_name,
       Date.parse('1970-01-01'), # Actually 1946-05-22
       'A1234BC',
-      'Swansea'
+      'Hull'
     )
   end
 
@@ -24,7 +24,7 @@ RSpec.feature 'process a booking', type: :feature do
     )
   end
 
-  let(:prison_email) { 'socialvisits.swansea@hmps.gsi.gov.uk' }
+  let(:prison_email) { 'socialvisits.hull@hmps.gsi.gov.uk' }
 
   before do
     make_booking(prisoner, visitor)
@@ -40,6 +40,10 @@ RSpec.feature 'process a booking', type: :feature do
     fill_in 'Password', with: ENV.fetch('PASSWORD')
     click_button 'Sign in'
 
+    within '.prison-switcher' do
+      select 'Hull', from: 'estate_id'
+      click_button 'Update'
+    end
     # The most recent requested visit
     all('table:last-child tbody tr:not(.hidden-row)').last.click_link('View')
 

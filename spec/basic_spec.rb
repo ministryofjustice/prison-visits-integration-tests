@@ -9,7 +9,7 @@ RSpec.feature 'booking a visit', type: :feature do
       'George', 'Best',
       Date.parse('1970-01-01'), # Actually 1946-05-22
       'A1234BC',
-      'Swansea'
+      'Hull'
     )
   end
 
