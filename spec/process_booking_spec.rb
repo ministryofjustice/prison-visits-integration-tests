@@ -56,7 +56,7 @@ RSpec.feature 'process a booking', type: :feature do
     find('#booking_response_selection_slot_0').click
     fill_in 'Reference number', with: '12345678'
 
-    click_button 'Send email'
+    click_button 'Process'
 
     expect(page).to have_content('Thank you for processing the visit')
 
