@@ -9,8 +9,8 @@ RSpec.feature 'process a booking', type: :feature do
   let(:prisoner) do
     Prisoner.new(
       prisoner_first_name, prisoner_last_name,
-      Date.parse('1970-01-01'), # Actually 1946-05-22
-      'A1234BC',
+      Date.parse(ENV['PRISONER_DOB']), # Actually 1946-05-22
+      ENV['PRISONER_NUMBER'],
       'Hull'
     )
   end
@@ -36,8 +36,8 @@ RSpec.feature 'process a booking', type: :feature do
     # Visiting prison inbox redirects to Sign On page
     visit prison_start_page
     expect(page).to have_content('Sign On')
-    fill_in 'Email', with: ENV.fetch('EMAIL')
-    fill_in 'Password', with: ENV.fetch('PASSWORD')
+    fill_in 'Email', with: ENV.fetch('SSO_EMAIL')
+    fill_in 'Password', with: ENV.fetch('SSO_PASSWORD')
     click_button 'Sign in'
 
     within '.prison-switcher' do
@@ -45,7 +45,7 @@ RSpec.feature 'process a booking', type: :feature do
       click_button 'Update'
     end
     # The most recent requested visit
-    all('table:last-child tbody tr:not(.hidden-row)').last.click_link('View')
+    all('tr:not(.hidden-row)').last.click_link('View')
 
     expect(page).to have_content(prisoner_first_name)
     expect(page).to have_content(prisoner_last_name)
@@ -53,7 +53,15 @@ RSpec.feature 'process a booking', type: :feature do
     expect(page).to have_content('Peter')
     expect(page).to have_content('Sellers')
 
-    find('#booking_response_selection_slot_0').click
+    # NOMIS CHECKS
+    expect(page).to have_css('.notice', text: 'The prisoner date of birth and number have been verified.')
+    expect(page).to have_css('.column-one-third', text: "Prisoner D.O.B #{prisoner.dob.strftime('%d/%m/%Y')} Verified")
+    expect(page).to have_css('.column-one-third', text: "Prisoner no. #{prisoner.number} Verified")
+
+    within '.choose-date' do
+      all('label.date-box').first.click
+    end
+
     fill_in 'Reference number', with: '12345678'
 
     click_button 'Process'
@@ -75,11 +83,5 @@ RSpec.feature 'process a booking', type: :feature do
     check 'Yes, I want to cancel this visit'
     click_button 'Cancel visit'
     expect(page).to have_content('Your visit is cancelled')
-
-    retry_for(10, ->(email) { email }) {
-      Mailtrap.instance.search_messages(prison_email).find do |email|
-        email.subject =~ /\ACANCELLED: Visit for #{prisoner_first_name} #{prisoner_last_name}/
-      end
-    }
   end
 end
