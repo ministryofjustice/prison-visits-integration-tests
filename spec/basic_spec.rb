@@ -9,7 +9,7 @@ RSpec.feature 'booking a visit', type: :feature do
       'George', 'Best',
       Date.parse(ENV['PRISONER_DOB']), # Actually 1946-05-22
       ENV['PRISONER_NUMBER'],
-      'Hull'
+      ENV['PRISON']
     )
   end
 
