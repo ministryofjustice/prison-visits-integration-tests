@@ -6,7 +6,6 @@ gem 'capybara-screenshot'
 gem 'capybara-webkit'
 gem 'excon'
 gem 'faker'
-gem 'poltergeist'
 gem 'rspec'
 
 group :development do
