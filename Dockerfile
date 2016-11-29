@@ -2,13 +2,8 @@ FROM ruby:2.3.1
 
 WORKDIR /app
 
-# Install phantomjs
-RUN set -ex \
-	&& wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2 \
-	&& tar -xvf phantomjs-1.9.8-linux-x86_64.tar.bz2 \
-	&& mv phantomjs-1.9.8-linux-x86_64/bin/phantomjs /usr/local/bin/. \
-	&& rm -rf phantomjs-1.9.8-linux-x86_64 \
-	&& rm phantomjs-1.9.8-linux-x86_64.tar.bz2
+# Install qt & xvfb (virtual X) for capybara-webkit
+RUN apt-get update -y; true && apt-get install -y xvfb qt5-default libqt5webkit5-dev gstreamer1.0-plugins-base gstreamer1.0-tools gstreamer1.0-x
 
 # Bundle before copying the app so that we make use of the Docker cache
 COPY Gemfile Gemfile.lock ./
@@ -20,4 +15,4 @@ COPY . .
 # if a better solution is found
 ENV RUBYOPT="-KU -E utf-8:utf-8"
 
-CMD ["rspec"]
+ENTRYPOINT ["./run.sh"]

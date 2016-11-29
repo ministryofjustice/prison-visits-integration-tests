@@ -7,9 +7,9 @@ RSpec.feature 'booking a visit', type: :feature do
     # under alcohol and assault [wikipedia]
     Prisoner.new(
       'George', 'Best',
-      Date.parse('1970-01-01'), # Actually 1946-05-22
-      'A1234BC',
-      'Hull'
+      Date.parse(ENV['PRISONER_DOB']), # Actually 1946-05-22
+      ENV['PRISONER_NUMBER'],
+      ENV['PRISON']
     )
   end
 
@@ -22,12 +22,18 @@ RSpec.feature 'booking a visit', type: :feature do
     )
   end
 
-  scenario 'making a booking, then cancelling it immediately' do
+  scenario 'fixing prisoner number typo, making a booking, then cancelling it immediately' do
     start_page = ENV.fetch('START_PAGE')
 
-    # Booking: Step 1 (prisoner)
+    # Fixing typo (checks nomis API is working): Step 0 (prisoner)
     visit start_page
     expect(page).to have_content 'Who are you visiting?'
+    fill_in_prisoner_step(prisoner)
+    fill_in 'Prisoner number', with: 'Z0000AA'
+    click_button 'Continue'
+    expect(page).to have_css('fieldset', text: /No prisoner matches the details you’ve supplied, please ask the prisoner to check your details are correct/)
+
+    # Booking: Step 1 (prisoner)
     fill_in_prisoner_step(prisoner)
     click_button 'Continue'
 
@@ -73,18 +79,5 @@ RSpec.feature 'booking a visit', type: :feature do
     # Visit status page again and expect cancellation text
     visit status_url
     expect(page).to have_content 'You cancelled this visit request'
-
-    # Fetch the new booking email sent to booking staff
-    # No need to retry – presumably this email will have been received since
-    # we've waited for the public email.
-    # TODO: Make Visitor name dynamic so that this matches one email
-    staff_email = Mailtrap.instance.search_messages('Visit request for George Best').first
-    # Sanity check that we've got the right email
-    expect(staff_email.text_body).to match(visit_id)
-    process_url = staff_email.capybara.find_link('Process the booking')[:href]
-
-    # Staff processing page
-    visit process_url
-    expect(page).to have_content 'The visitor has withdrawn this request'
   end
 end

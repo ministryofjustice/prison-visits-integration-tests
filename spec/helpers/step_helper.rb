@@ -11,6 +11,8 @@ def make_booking(prisoner, visitor)
   click_button 'Continue'
   fill_in_slots_step
   click_button 'Continue'
+  expect(page).to have_content 'Check your request'
+
   click_button 'Send request'
 end
 
