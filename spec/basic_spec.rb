@@ -28,10 +28,13 @@ RSpec.feature 'booking a visit', type: :feature do
     # Fixing typo (checks nomis API is working): Step 0 (prisoner)
     visit start_page
     expect(page).to have_content 'Who are you visiting?'
-    fill_in_prisoner_step(prisoner)
-    fill_in 'Prisoner number', with: 'Z0000AA'
-    click_button 'Continue'
-    expect(page).to have_css('fieldset', text: /No prisoner matches the details you’ve supplied, please ask the prisoner to check your details are correct/)
+
+    if ENV['PUBLIC_PRISONER_CHECK'] == 'true'
+      fill_in_prisoner_step(prisoner)
+      fill_in 'Prisoner number', with: 'Z0000AA'
+      click_button 'Continue'
+      expect(page).to have_css('fieldset', text: /No prisoner matches the details you’ve supplied, please ask the prisoner to check your details are correct/)
+    end
 
     # Booking: Step 1 (prisoner)
     fill_in_prisoner_step(prisoner)
