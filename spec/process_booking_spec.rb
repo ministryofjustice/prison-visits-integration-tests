@@ -38,10 +38,8 @@ RSpec.feature 'process a booking', type: :feature do
     fill_in 'Password', with: ENV.fetch('SSO_PASSWORD')
     click_button 'Sign in'
 
-    within '.prison-switcher' do
-      select ENV['PRISON'], from: 'estate_id'
-      click_button 'Update'
-    end
+    select ENV['PRISON'], from: 'estate_ids', visible: false
+    click_button 'Update'
     # The most recent requested visit
     all('tr:not(.hidden-row)').last.click_link('View')
 
@@ -53,8 +51,8 @@ RSpec.feature 'process a booking', type: :feature do
 
     # NOMIS CHECKS
     expect(page).to have_css('.notice', text: 'The prisoner date of birth and number have been verified.')
-    expect(page).to have_css('.column-one-third', text: "Prisoner D.O.B #{prisoner.dob.strftime('%d/%m/%Y')} Verified")
-    expect(page).to have_css('.column-one-third', text: "Prisoner no. #{prisoner.number} Verified")
+    expect(page).to have_css('.column-one-quarter', text: "Prisoner D.O.B #{prisoner.dob.strftime('%d/%m/%Y')} Verified")
+    expect(page).to have_css('.column-one-quarter', text: "Prisoner no. #{prisoner.number} Verified")
 
     within '.choose-date' do
       all('label.date-box').first.click
