@@ -40,14 +40,14 @@ RSpec.feature 'booking a visit', type: :feature do
     fill_in_prisoner_step(prisoner)
     click_button 'Continue'
 
-    # Booking: Step 2 (visitors)
-    expect(page).to have_content 'Your details'
-    fill_in_visitor_step(visitor)
-    click_button 'Continue'
-
-    # Booking: Step 3 (pick slots)
+    # Booking: Step 2 (pick slots)
     expect(page).to have_content 'When do you want to visit?'
     fill_in_slots_step
+    click_button 'Continue'
+
+    # Booking: Step 3 (visitors)
+    expect(page).to have_content 'Your details'
+    fill_in_visitor_step(visitor)
     click_button 'Continue'
 
     # Booking: Step 4 (summary)

@@ -7,9 +7,9 @@ def make_booking(prisoner, visitor)
   visit start_page
   fill_in_prisoner_step(prisoner)
   click_button 'Continue'
-  fill_in_visitor_step(visitor)
-  click_button 'Continue'
   fill_in_slots_step
+  click_button 'Continue'
+  fill_in_visitor_step(visitor)
   click_button 'Continue'
   expect(page).to have_content 'Check your request'
 
