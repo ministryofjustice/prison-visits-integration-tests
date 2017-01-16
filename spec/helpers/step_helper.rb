@@ -32,8 +32,8 @@ def select_prison(name)
 end
 
 def fill_in_visitor_step(visitor)
-  fill_in 'Your first name', with: visitor.first_name
-  fill_in 'Your last name', with: visitor.last_name
+  fill_in 'First name', with: visitor.first_name
+  fill_in 'Last name', with: visitor.last_name
   fill_in 'Day', with: visitor.dob.day.to_s
   fill_in 'Month', with: visitor.dob.month.to_s
   fill_in 'Year', with: visitor.dob.year.to_s
