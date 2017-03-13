@@ -7,13 +7,11 @@ def make_booking(prisoner, visitor)
   visit start_page
   fill_in_prisoner_step(prisoner)
   click_button 'Continue'
-  fill_in_slots_step
-  click_button 'Continue'
+  select_first_available_date_and_slot
+  click_link 'No more to add'
   fill_in_visitor_step(visitor)
   click_button 'Continue'
-  expect(page).to have_content 'Check your request'
-
-  click_button 'Send request'
+  click_button 'Send visit request'
 end
 
 def fill_in_prisoner_step(prisoner)
@@ -58,4 +56,13 @@ end
 
 def email_link_href(email, link_text)
   email.capybara.find_link(link_text).native.attributes['href'].value
+end
+
+def select_first_available_date_and_slot
+  first("table.booking-calendar td.available span").click
+  first('#js-slotAvailability label', visible: false).trigger('click')
+end
+
+def check_yes_cancel
+  first("#cancel-visit label.selection-button-checkbox").click
 end

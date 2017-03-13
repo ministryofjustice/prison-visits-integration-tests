@@ -40,10 +40,10 @@ RSpec.feature 'booking a visit', type: :feature do
     fill_in_prisoner_step(prisoner)
     click_button 'Continue'
 
-    # Booking: Step 2 (pick slots)
+    # Booking: Step 2 (pick 1 slot)
     expect(page).to have_content 'When do you want to visit?'
-    fill_in_slots_step
-    click_button 'Continue'
+    select_first_available_date_and_slot
+    click_link 'No more to add'
 
     # Booking: Step 3 (visitors)
     expect(page).to have_content 'Your details'
@@ -51,8 +51,8 @@ RSpec.feature 'booking a visit', type: :feature do
     click_button 'Continue'
 
     # Booking: Step 4 (summary)
-    expect(page).to have_content 'Check your request'
-    click_button 'Send request'
+    expect(page).to have_content 'Check your visit details'
+    click_button 'Send visit request'
 
     # Redirect to visit show page
     expect(page).to have_content 'Your request is being processed'
@@ -75,7 +75,7 @@ RSpec.feature 'booking a visit', type: :feature do
     # Status page
     visit status_url
     expect(page).to have_content 'Your visit is not booked yet'
-    check 'Yes, I want to cancel this visit'
+    check_yes_cancel
     click_button 'Cancel visit'
     expect(page).to have_content 'You cancelled this visit request'
 
