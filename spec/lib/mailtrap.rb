@@ -34,7 +34,8 @@ class Mailtrap
     response = @connection.get({
       path: '/api/v1/inboxes/106414/messages',
       query: query,
-      expects: [200]
+      expects: [200],
+      idempotent: true
     })
     messages = JSON.parse(response.body)
     emails = messages.map { |e| Email.parse(e) }
