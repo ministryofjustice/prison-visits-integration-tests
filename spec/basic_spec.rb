@@ -55,7 +55,7 @@ RSpec.feature 'booking a visit', type: :feature do
     click_button 'Send visit request'
 
     # Redirect to visit show page
-    expect(page).to have_content 'Your request is being processed'
+    expect(page).to have_content 'Visit request sent'
     expect(page).to have_content prisoner.prison
 
     # Fetch 'booking requested' email sent to prisoner
@@ -75,6 +75,9 @@ RSpec.feature 'booking a visit', type: :feature do
     # Status page
     visit status_url
     expect(page).to have_content 'Your visit is not booked yet'
+    within('#cancel-visit-section') do
+      find('.summary').click
+    end
     check_yes_cancel
     click_button 'Cancel visit'
     expect(page).to have_content 'You cancelled this visit request'
