@@ -59,8 +59,8 @@ def email_link_href(email, link_text)
 end
 
 def select_first_available_date_and_slot
-  first("table.booking-calendar td.available span").click
-  first('#js-slotAvailability label', visible: false).trigger('click')
+  first("table.booking-calendar td.available a").click
+  first('#js-slotAvailability label').click
 end
 
 def check_yes_cancel

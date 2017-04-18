@@ -38,7 +38,12 @@ RSpec.feature 'process a booking', type: :feature do
     fill_in 'Password', with: ENV.fetch('SSO_PASSWORD')
     click_button 'Sign in'
 
-    select ENV['PRISON'], from: 'estate_ids', visible: false
+    first('#estate_ids_chosen li.search-field input.chosen-search-input').click
+    prison_li = all('.chosen-drop ul.chosen-results li').detect do|li|
+      li.text == ENV['PRISON']
+    end
+
+    prison_li.click
     click_button 'Update'
     # The most recent requested visit
     all('tr:not(.hidden-row)').last.click_link('View')
