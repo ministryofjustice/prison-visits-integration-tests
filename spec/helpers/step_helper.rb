@@ -6,6 +6,7 @@ def make_booking(prisoner, visitor)
 
   visit start_page
   fill_in_prisoner_step(prisoner)
+  fill_in 'Prisoner number', with: prisoner.number
   click_button 'Continue'
   select_first_available_date_and_slot
   click_link 'No more to add'
