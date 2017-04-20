@@ -6,6 +6,7 @@ def make_booking(prisoner, visitor)
 
   visit start_page
   fill_in_prisoner_step(prisoner)
+  fill_in 'Prisoner number', with: prisoner.number
   click_button 'Continue'
   select_first_available_date_and_slot
   click_link 'No more to add'
@@ -16,11 +17,10 @@ end
 
 def fill_in_prisoner_step(prisoner)
   fill_in 'Prisoner first name', with: prisoner.first_name
-  fill_in 'Prisoner last name', with: prisoner.last_name
-  fill_in 'Day', with: prisoner.dob.day.to_s
-  fill_in 'Month', with: prisoner.dob.month.to_s
-  fill_in 'Year', with: prisoner.dob.year.to_s
-  fill_in 'Prisoner number', with: prisoner.number
+  fill_in 'Prisoner last name',  with: prisoner.last_name
+  fill_in 'Day',                 with: prisoner.dob.day.to_s
+  fill_in 'Month',               with: prisoner.dob.month.to_s
+  fill_in 'Year',                with: prisoner.dob.year.to_s
   select_prison prisoner.prison
 end
 
@@ -59,8 +59,8 @@ def email_link_href(email, link_text)
 end
 
 def select_first_available_date_and_slot
-  first("table.booking-calendar td.available span").click
-  first('#js-slotAvailability label', visible: false).trigger('click')
+  first("table.booking-calendar td.available a").click
+  first('#js-slotAvailability label').click
 end
 
 def check_yes_cancel

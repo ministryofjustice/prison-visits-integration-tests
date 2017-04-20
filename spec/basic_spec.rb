@@ -29,24 +29,25 @@ RSpec.feature 'booking a visit', type: :feature do
     visit start_page
     expect(page).to have_content 'Who are you visiting?'
 
+    fill_in_prisoner_step(prisoner)
+
     if ENV['PUBLIC_PRISONER_CHECK'] == 'true'
-      fill_in_prisoner_step(prisoner)
       fill_in 'Prisoner number', with: 'Z0000AA'
       click_button 'Continue'
       expect(page).to have_css('fieldset', text: /No prisoner matches the details you’ve supplied, please ask the prisoner to check your details are correct/)
     end
 
     # Booking: Step 1 (prisoner)
-    fill_in_prisoner_step(prisoner)
+    fill_in 'Prisoner number', with: prisoner.number
     click_button 'Continue'
 
     # Booking: Step 2 (pick 1 slot)
-    expect(page).to have_content 'When do you want to visit?'
+    expect(page).to have_css 'h1', text: 'When do you want to visit?'
     select_first_available_date_and_slot
     click_link 'No more to add'
 
     # Booking: Step 3 (visitors)
-    expect(page).to have_content 'Your details'
+    expect(page).to have_content 'Your visitor details'
     fill_in_visitor_step(visitor)
     click_button 'Continue'
 
