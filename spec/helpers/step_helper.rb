@@ -16,11 +16,10 @@ end
 
 def fill_in_prisoner_step(prisoner)
   fill_in 'Prisoner first name', with: prisoner.first_name
-  fill_in 'Prisoner last name', with: prisoner.last_name
-  fill_in 'Day', with: prisoner.dob.day.to_s
-  fill_in 'Month', with: prisoner.dob.month.to_s
-  fill_in 'Year', with: prisoner.dob.year.to_s
-  fill_in 'Prisoner number', with: prisoner.number
+  fill_in 'Prisoner last name',  with: prisoner.last_name
+  fill_in 'Day',                 with: prisoner.dob.day.to_s
+  fill_in 'Month',               with: prisoner.dob.month.to_s
+  fill_in 'Year',                with: prisoner.dob.year.to_s
   select_prison prisoner.prison
 end
 
