@@ -1,3 +1,3 @@
 #!/bin/bash
 
-xvfb-run bundle exec rspec
+# xvfb-run bundle exec rspec
