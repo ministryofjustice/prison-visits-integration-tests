@@ -1,6 +1,36 @@
 Prisoner = Struct.new(:first_name, :last_name, :dob, :number, :prison)
 Visitor = Struct.new(:first_name, :last_name, :dob, :email, :phone)
 
+def prison_start_page
+  @prison_start_page ||= ENV.fetch('PRISON_START_PAGE') do
+    raise ArgumentError.new('Please provide a PRISON_START_PAGE environment variable')
+  end
+end
+
+def login_as_staff
+  # Visiting prison inbox redirects to Sign On page
+  visit prison_start_page
+
+  expect(page).to have_css('a.header__menu__proposition-name',
+                           text: 'Ministry of Justice Sign On')
+
+  fill_in 'Email',    with: ENV.fetch('SSO_EMAIL')
+  fill_in 'Password', with: ENV.fetch('SSO_PASSWORD')
+  click_button 'Sign in'
+end
+
+def select_prison_for_processing
+  first('#estate_ids_chosen li.search-field input.chosen-search-input').click
+  prison_li = all('.chosen-drop ul.chosen-results li').detect do|li|
+    li.text == ENV.fetch('PRISON') do
+      raise ArgumentError.new('Please provide a PRISON environment variable')
+    end
+  end
+
+  prison_li.click
+  click_button 'Update'
+end
+
 def make_booking(prisoner, visitor)
   start_page = ENV.fetch('START_PAGE')
 
@@ -30,13 +60,13 @@ def select_prison(name)
 end
 
 def fill_in_visitor_step(visitor)
-  fill_in 'First name', with: visitor.first_name
-  fill_in 'Last name', with: visitor.last_name
-  fill_in 'Day', with: visitor.dob.day.to_s
-  fill_in 'Month', with: visitor.dob.month.to_s
-  fill_in 'Year', with: visitor.dob.year.to_s
+  fill_in 'First name',    with: visitor.first_name
+  fill_in 'Last name',     with: visitor.last_name
+  fill_in 'Day',           with: visitor.dob.day.to_s
+  fill_in 'Month',         with: visitor.dob.month.to_s
+  fill_in 'Year',          with: visitor.dob.year.to_s
   fill_in 'Email address', with: visitor.email
-  fill_in 'Phone number', with: visitor.phone
+  fill_in 'Phone number',  with: visitor.phone
 end
 
 def fill_in_slots_step

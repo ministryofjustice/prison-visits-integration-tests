@@ -24,65 +24,68 @@ RSpec.feature 'process a booking', type: :feature do
     )
   end
 
-  before do
-    make_booking(prisoner, visitor)
+  describe 'accept booking' do
+    before do
+      make_booking(prisoner, visitor)
+
+      login_as_staff
+      select_prison_for_processing
+    end
+
+    scenario 'then visitor cancels' do
+
+      # The most recent requested visit
+      all('tr:not(.hidden-row)').last.click_link('View')
+
+      expect(page).to have_css('.bold-small', text: [prisoner_first_name, prisoner_last_name].join(' '))
+      expect(page).to have_css('.font-xsmall', text: 'Peter Sellers')
+
+      # NOMIS CHECKS
+      expect(page).to have_css('.notice', text: 'The prisoner date of birth and number have been verified.')
+      expect(page).to have_css('.column-one-quarter', text: "Prisoner D.O.B #{prisoner.dob.strftime('%d/%m/%Y')} Verified")
+      expect(page).to have_css('.column-one-quarter', text: "Prisoner no. #{prisoner.number} Verified")
+
+      within '.choose-date' do
+        all('label.date-box').first.click
+      end
+
+      fill_in 'Reference number', with: '12345678'
+
+      click_button 'Process'
+
+      expect(page).to have_css('p.notification', text: 'Thank you for processing the visit')
+
+      confirmation_email = retry_for(180, ->(email) { email }) {
+        visitor_emails = Mailtrap.instance.search_messages(visitor.email)
+
+        # Log messages returned by the API to aid debugging
+        puts "Matched email subjects: #{visitor_emails.map(&:subject)}"
+
+        visitor_emails.find { |email| email.subject =~ /^Visit confirmed/ }
+      }
+
+      cancel_url = email_link_href(confirmation_email, 'you can cancel this visit')
+      visit cancel_url
+      expect(page).to have_content('Your visit has been confirmed')
+      check_yes_cancel
+      click_button 'Cancel visit'
+      expect(page).to have_content('Your visit is cancelled')
+    end
   end
 
-  scenario 'accept booking, then visitor cancels' do
-    prison_start_page = ENV.fetch('PRISON_START_PAGE')
+  describe 'clean up inboxes' do
+    before do
+      make_booking(prisoner, visitor)
 
-    # Visiting prison inbox redirects to Sign On page
-    visit prison_start_page
-    expect(page).to have_content('Sign On')
-    fill_in 'Email', with: ENV.fetch('SSO_EMAIL')
-    fill_in 'Password', with: ENV.fetch('SSO_PASSWORD')
-    click_button 'Sign in'
-
-    first('#estate_ids_chosen li.search-field input.chosen-search-input').click
-    prison_li = all('.chosen-drop ul.chosen-results li').detect do|li|
-      li.text == ENV['PRISON']
+      login_as_staff
+      select_prison_for_processing
     end
 
-    prison_li.click
-    click_button 'Update'
-    # The most recent requested visit
-    all('tr:not(.hidden-row)').last.click_link('View')
-
-    expect(page).to have_content(prisoner_first_name)
-    expect(page).to have_content(prisoner_last_name)
-
-    expect(page).to have_content('Peter')
-    expect(page).to have_content('Sellers')
-
-    # NOMIS CHECKS
-    expect(page).to have_css('.notice', text: 'The prisoner date of birth and number have been verified.')
-    expect(page).to have_css('.column-one-quarter', text: "Prisoner D.O.B #{prisoner.dob.strftime('%d/%m/%Y')} Verified")
-    expect(page).to have_css('.column-one-quarter', text: "Prisoner no. #{prisoner.number} Verified")
-
-    within '.choose-date' do
-      all('label.date-box').first.click
+    scenario 'Clean All of the Cancelled visits' do
+      page.all('table tbody td form input[type="commit"]').each do |submit_button|
+        click_button submit_button
+        expect(page).to have_css('h3.heading-medium', text: 'Cancellations')
+      end
     end
-
-    fill_in 'Reference number', with: '12345678'
-
-    click_button 'Process'
-
-    expect(page).to have_content('Thank you for processing the visit')
-
-    confirmation_email = retry_for(180, ->(email) { email }) {
-      visitor_emails = Mailtrap.instance.search_messages(visitor.email)
-
-      # Log messages returned by the API to aid debugging
-      puts "Matched email subjects: #{visitor_emails.map(&:subject)}"
-
-      visitor_emails.find { |email| email.subject =~ /^Visit confirmed/ }
-    }
-
-    cancel_url = email_link_href(confirmation_email, 'you can cancel this visit')
-    visit cancel_url
-    expect(page).to have_content('Your visit has been confirmed')
-    check_yes_cancel
-    click_button 'Cancel visit'
-    expect(page).to have_content('Your visit is cancelled')
   end
 end
