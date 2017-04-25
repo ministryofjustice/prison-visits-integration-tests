@@ -12,6 +12,9 @@ def login_as_staff
   screenshot_and_save_page
   visit prison_start_page
 
+  return if page.all('form input[type="submit"][value="Sign out"]').any?
+
+
   expect(page).to have_css('a.header__menu__proposition-name',
                            text: 'Ministry of Justice Sign On')
 
