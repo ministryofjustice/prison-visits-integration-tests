@@ -77,7 +77,6 @@ RSpec.feature 'process a booking', type: :feature do
     before do
       make_booking(prisoner, visitor)
 
-      login_as_staff
       select_prison_for_processing
     end
 
