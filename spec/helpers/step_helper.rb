@@ -9,6 +9,7 @@ end
 
 def login_as_staff
   # Visiting prison inbox redirects to Sign On page
+  screenshot_and_save_page
   visit prison_start_page
 
   expect(page).to have_css('a.header__menu__proposition-name',
