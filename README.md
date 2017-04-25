@@ -1,13 +1,11 @@
 ## Setup instructions
 
-PhantomJS must be installed
-
-	brew install phantomjs
+We run our integration test within Firefox for more reliability.
 
 Run the tests
 
-	bundle install
-	bundle exec rspec spec/**/*_spec.rb
+    bundle install
+    bundle exec rspec spec
 
 ### Running locally
 
@@ -40,5 +38,5 @@ Staff login details (for single sign on).
 
 ## Docker build
 
-	docker build -t pvb-integration .
-	docker run --env-file=.env pvb-integration
+    docker build -t pvb-integration .
+    docker run --env-file=.env pvb-integration
