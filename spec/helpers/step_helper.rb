@@ -9,7 +9,6 @@ end
 
 def login_as_staff
   # Visiting prison inbox redirects to Sign On page
-  screenshot_and_save_page
   visit prison_start_page
 
   return if page.all('form input[type="submit"][value="Sign out"]').any?
