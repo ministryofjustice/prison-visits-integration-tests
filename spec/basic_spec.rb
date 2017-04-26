@@ -47,7 +47,7 @@ RSpec.feature 'booking a visit', type: :feature do
     click_link 'No more to add'
 
     # Booking: Step 3 (visitors)
-    expect(page).to have_content 'Your visitor details'
+    expect(page).to have_content 'Visitor details'
     fill_in_visitor_step(visitor)
     click_button 'Continue'
 
