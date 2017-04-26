@@ -25,20 +25,17 @@ RSpec.feature 'process a booking', type: :feature do
   end
 
   describe 'accept booking' do
-    before do
+
+    scenario 'then visitor cancels' do
       make_booking(prisoner, visitor)
 
       login_as_staff
       select_prison_for_processing
-    end
-
-    scenario 'then visitor cancels' do
-
       # The most recent requested visit
       all('tr:not(.hidden-row)').last.click_link('View')
 
       expect(page).to have_css('.bold-small', text: [prisoner_first_name, prisoner_last_name].join(' '))
-      expect(page).to have_css('.font-xsmall', text: 'Peter Sellers')
+      expect(page).to have_css('dl dd', text: 'Peter Sellers')
 
       # NOMIS CHECKS
       expect(page).to have_css('.notice', text: 'The prisoner date of birth and number have been verified.')

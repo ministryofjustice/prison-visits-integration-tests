@@ -41,6 +41,8 @@ def make_booking(prisoner, visitor)
   fill_in_prisoner_step(prisoner)
   fill_in 'Prisoner number', with: prisoner.number
   click_button 'Continue'
+
+  expect(page).to have_css('h1', text: 'When do you want to visit?')
   select_first_available_date_and_slot
   click_link 'No more to add'
   fill_in_visitor_step(visitor)
