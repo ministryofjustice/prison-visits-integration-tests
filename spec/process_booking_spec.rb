@@ -35,7 +35,7 @@ RSpec.feature 'process a booking', type: :feature do
       all('tr:not(.hidden-row)').last.click_link('View')
 
       expect(page).to have_css('.bold-small', text: [prisoner_first_name, prisoner_last_name].join(' '))
-      expect(page).to have_css('dl dd', text: 'Peter Sellers')
+      expect(page).to have_css('span.font-xsmall', text: 'Peter Sellers')
 
       # NOMIS CHECKS
       expect(page).to have_css('.notice', text: 'The prisoner date of birth and number have been verified.')
