@@ -1,0 +1,13 @@
+server: hub.testingbot.com
+user: yann
+key: 8e2230fb8fb761a98290937a02b3d158
+secret: 4a076cf55108b509019384db0a6717ab
+
+common_caps:
+  "screenrecorder": true
+
+browser_caps:
+  -
+    "browserName": "internet explorer"
+    "version": "8"
+    "platform" : "WIN7"
