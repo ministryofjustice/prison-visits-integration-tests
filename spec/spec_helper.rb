@@ -1,8 +1,10 @@
 require 'capybara/rspec'
-require 'capybara-screenshot/rspec'
+# require 'capybara-screenshot/rspec'
 require 'byebug'
+require_relative 'support/testingbot_driver'
 
-Capybara.default_driver = :selenium
+Capybara.default_driver = :testingbot
+Capybara.run_server = false
 
 Capybara.save_path = File.expand_path('../screenshots', __dir__)
 
