@@ -1,3 +1,6 @@
+machine:
+  ruby:
+    2.4.1
 general:
   artifacts:
     - 'screenshots'
