@@ -78,7 +78,7 @@ RSpec.feature 'process a booking', type: :feature do
 
     scenario 'Clean All of the Cancelled visits' do
       page.all('table tbody td form input[type="submit"]').each do |submit_button|
-        click_button submit_button
+        submit_button.click
         expect(page).to have_css('h3.heading-medium', text: 'Cancellations')
       end
     end
