@@ -38,7 +38,7 @@ RSpec.feature 'process a booking', type: :feature do
       expect(page).to have_css('.name', text: 'Peter Sellers')
 
       # NOMIS CHECKS
-      expect(page).to have_css('.notice', text: 'The prisoner date of birth and number have been verified.')
+      expect(page).to have_css('.notice', text: 'The prisoner date of birth, prisoner number and prison name have been verified.')
       expect(page).to have_css('.column-one-quarter', text: "Prisoner D.O.B #{prisoner.dob.strftime('%d/%m/%Y')} Verified")
       expect(page).to have_css('.column-one-quarter', text: "Prisoner no. #{prisoner.number} Verified")
 
