@@ -99,5 +99,5 @@ def select_first_available_date_and_slot
 end
 
 def check_yes_cancel
-  first("#cancel-visit label.selection-button-checkbox").click
+  check 'Yes, I want to cancel this visit', visible: false
 end
