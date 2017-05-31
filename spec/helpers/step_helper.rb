@@ -40,6 +40,7 @@ def make_booking(prisoner, visitor)
   visit start_page
   fill_in_prisoner_step(prisoner)
   fill_in 'Prisoner number', with: prisoner.number
+  fill_in 'Prison name', with: ENV.fetch('PRISON')
   click_button 'Continue'
 
   expect(page).to have_css('h1', text: 'When do you want to visit?')
