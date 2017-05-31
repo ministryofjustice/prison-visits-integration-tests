@@ -70,15 +70,13 @@ RSpec.feature 'booking a visit', type: :feature do
     email = emails.first
     status_url = email.capybara.find_link('visit status page')[:href]
 
-    # Extract visit_id for use later
-    visit_id = status_url.split('/').last
-
     # Status page
     visit status_url
     expect(page).to have_content 'Your visit is not booked yet'
     within('#cancel-visit-section') do
       find('.summary').click
     end
+
     check_yes_cancel
     click_button 'Cancel visit'
     expect(page).to have_content 'You cancelled this visit request'
