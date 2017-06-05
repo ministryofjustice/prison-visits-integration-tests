@@ -43,7 +43,7 @@ RSpec.feature 'process a booking', type: :feature do
       expect(page).to have_css('.column-one-quarter', text: "Prisoner no. #{prisoner.number} Verified")
 
       within '.choose-date' do
-        all('label.date-box').first.click
+        first('label.date-box__label').click
       end
 
       fill_in 'Reference number', with: '12345678'
