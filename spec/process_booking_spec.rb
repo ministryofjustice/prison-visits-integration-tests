@@ -48,6 +48,10 @@ RSpec.feature 'process a booking', type: :feature do
 
       fill_in 'Reference number', with: '12345678'
 
+      within '.visitor-contact-list' do
+        all('option')[1].select_option
+      end
+
       click_button 'Process'
 
       expect(page).to have_css('p.notification', text: 'Thank you for processing the visit')
