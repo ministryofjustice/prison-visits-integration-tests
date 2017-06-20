@@ -34,7 +34,7 @@ RSpec.feature 'booking a visit', type: :feature do
     if ENV['PUBLIC_PRISONER_CHECK'] == 'true'
       fill_in 'Prisoner number', with: 'Z0000AA'
       click_button 'Continue'
-      expect(page).to have_css('fieldset', text: /No prisoner matches the details you’ve supplied, please ask the prisoner to check your details are correct/)
+      expect(page).to have_css('fieldset span.error-message', text: 'No prisoner matches the details you’ve supplied, please ask the prisoner to check your details are correct')
     end
 
     # Booking: Step 1 (prisoner)
