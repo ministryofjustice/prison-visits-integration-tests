@@ -66,4 +66,4 @@ test:
         export RAILS_ENV=test
         export START_PAGE="$(echo $PVB_PUBLIC_PORT | sed 's|tcp:/|http://|')/en/request"
         export PRISON_START_PAGE="$(PVB2_PORT | sed 's|tcp:/|http://|')/prison"
-        bundle exec rspec spec
+        bundle exec rspec spec/
