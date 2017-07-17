@@ -29,8 +29,8 @@ build:
           name: rspec
           code: bundle exec rspec
       - internal/docker-push:
-          username: $USERNAME
-          password: $PASSWORD
+          username: $POSTGRES_USERNAME
+          password: $POSTGRES_PASSWORD
           tag: $WERCKER_GIT_BRANCH-$WERCKER_BUILD_ID
           repository: pvbteam/prison-visits-integration-tests
 
@@ -43,17 +43,21 @@ test:
         POSTGRES_USER: $POSTGRES_USER
     - id: pvbteam/prison-visits-2
       name: pvb2
-      tag: wercker-spike-595a42033c2e150001968cae
-      cmd: rake db:setup db:seed && rails s -p 3000 -b 0.0.0.0
+      # tag: wercker-spike-595a42033c2e150001968cae
+      entrypoint: ./run-test.sh bin/rake db:setup db:seed && bin/rails s -p 3000 -b 0.0.0.0
       ports:
         - "3000"
-    - id: pvbteam/prison-visits-public
-      name: pvb-public
-      tag: wercker-spike-595a51f83c2e15000196b062
-      cmd: rails s -p 4000 -b 0.0.0.0
-      ports:
-        - "4000"
+    # - id: pvbteam/prison-visits-public
+    #   name: pvb-public
+    #   tag: wercker-spike-595a51f83c2e15000196b062
+    #   cmd: /pipeline/source/bin/rails s -p 4000 -b 0.0.0.0
+    #   ports:
+    #     - "4000"
   steps:
+    - script:
+        name: env
+        code: |
+          env | grep POSTGRES
     - install-packages:
         packages: curl nodejs xvfb iceweasel
     - bundle-install
@@ -65,5 +69,5 @@ test:
         export DISPLAY=:99
         export RAILS_ENV=test
         export START_PAGE="$(echo $PVB_PUBLIC_PORT | sed 's|tcp:/|http://|')/en/request"
-        export PRISON_START_PAGE="$(PVB2_PORT | sed 's|tcp:/|http://|')/prison"
+        export PRISON_START_PAGE="$($PVB2_PORT | sed 's|tcp:/|http://|')/prison"
         bundle exec rspec spec/
