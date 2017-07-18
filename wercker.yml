@@ -23,7 +23,7 @@ build:
     steps:
       - install-packages:
           packages: nodejs xvfb iceweasel
-          # clear-cache: false
+          clear-cache: false
       - bundle-install
       - script:
           name: rspec
@@ -44,30 +44,46 @@ test:
     - id: pvbteam/prison-visits-2
       name: pvb2
       # tag: wercker-spike-595a42033c2e150001968cae
-      entrypoint: ./run-test.sh bin/rake db:setup db:seed && bin/rails s -p 3000 -b 0.0.0.0
+      entrypoint: ./run-test.sh
       ports:
         - "3000"
-    # - id: pvbteam/prison-visits-public
-    #   name: pvb-public
-    #   tag: wercker-spike-595a51f83c2e15000196b062
-    #   cmd: /pipeline/source/bin/rails s -p 4000 -b 0.0.0.0
-    #   ports:
-    #     - "4000"
+      env:
+        PRISON_ESTATE_IPS: "0.0.0.0/0"
+        MOJSSO_URL: https://www.signon.dsd.io
+        MOJSSO_ID: ac3529fe8e769d85f57eb6fce4c8c622c5c06de64e5ee62510b6235e435608ed
+        MOJSSO_SESSION: 68297ad6f105f6b3ed2e463407b0f235ca304d8463a8a838db419a419428af76
+        NOMIS_API_HOST: https://noms-api-dev.dsd.io
+        NOMIS_API_KEY: MHcCAQEEINAI6rBPpPWvCFZpyyBQZTSKuzCKds3CXNNwOtLAdNpkoAoGCCqGSM49AwEHoUQDQgAEPYlvBIlMx3RZ1SmNMELTB8IFKLaztTjPnW61nnx+OjUHJkveZ5zq3RjQmFwVdutTvdCapx9txdKSMRkZs5FtEQ==
+        NOMIS_API_TOKEN: eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJpYXQiOjE0Nzk5ODU5NzksImV4cCI6MTUxMTUyMTk3OSwiY2xpZW50IjoicHZiLWhlcm9rdS1zdGFmZiIsImtleSI6Ik1Ga3dFd1lIS29aSXpqMENBUVlJS29aSXpqMERBUWNEUWdBRVBZbHZCSWxNeDNSWjFTbU5NRUxUQjhJRktMYXp0VGpQblc2MW5ueCtPalVISmt2ZVo1enEzUmpRbUZ3VmR1dFR2ZENhcHg5dHhkS1NNUmtaczVGdEVRPT0iLCJhY2Nlc3MiOlsiXlxcL25vbWlzYXBpXFwvIl19.0GZfx_BCgiyuwvvcBVcuMdvwX4jJ2mGvKRcHxPWDKE86WR-HpFV-Z5ExCKKkSbA9n8uq-U6LlA_L3hORc0_ziQ
+    - id: pvbteam/prison-visits-public
+      name: pvb-public
+      tag: wercker-spike-595a51f83c2e15000196b062
+      cmd: /pipeline/source/bin/rails s -p 4000 -b 0.0.0.0
+      ports:
+        - "4000"
+      env:
+        PRISON_VISITS_API: http://$PVB2_PORT_3000_TCP_ADDR:3000/
   steps:
-    - script:
-        name: env
-        code: |
-          env | grep POSTGRES
     - install-packages:
         packages: curl nodejs xvfb iceweasel
+        clear-cache: false
     - bundle-install
     - script:
       name: trigger integration tests
       code: |
-        env
+        printenv
         Xvfb :99 &
         export DISPLAY=:99
         export RAILS_ENV=test
-        export START_PAGE="$(echo $PVB_PUBLIC_PORT | sed 's|tcp:/|http://|')/en/request"
-        export PRISON_START_PAGE="$($PVB2_PORT | sed 's|tcp:/|http://|')/prison"
+        export START_PAGE="http://$PVB_PUBLIC_PORT_4000_TCP_ADDR:4000/en/request"
+        export PRISON_START_PAGE="http://$PVB2_PORT_3000_TCP_ADDR:3000/prison/inbox"
+        export MAILTRAP_API_TOKEN=c9131d7e17802b22b89547c815a2da78
+        export EMAIL=martyn.loughran+integration@digital.justice.gov.uk
+        export PASSWORD=readinggaol
+        export SSO_EMAIL=alan.kennedy+integration@digital.justice.gov.uk
+        export SSO_PASSWORD=gonomisapigo
+        export PRISON=Leeds
+        export PRISONER_NUMBER=A1410AE
+        export PRISONER_DOB=1960-06-01
+        PUBLIC_PRISONER_CHECK=true
         bundle exec rspec spec/
