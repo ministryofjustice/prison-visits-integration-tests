@@ -1,89 +1,104 @@
-# This references the default Ruby container from
-# the Docker Hub.
-# https://registry.hub.docker.com/_/ruby/
-# If you want to use a specific version you would use a tag:
-# ruby:2.2.2
 box: ruby:2.4.1
-# You can also use services such as databases. Read more on our dev center:
-# http://devcenter.wercker.com/docs/services/index.html
-# services:
-    # - postgres
-    # http://devcenter.wercker.com/docs/services/postgresql.html
+services:
+  - id: redis:alpine
+    name: redis
+  - id: postgres:9.4
+    name: postgres
+    env:
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_USER: $POSTGRES_USER
+  - id: pvbteam/moj-sso
+    name: moj-sso
+    ports:
+      - "5000"
+    env:
+      PORT: 5000
+    entrypoint: ./run-test.sh
+  - id: pvbteam/prison-visits-2
+    name: pvb2
+    entrypoint: ./run-test.sh
+    ports:
+      - "3000"
+    env:
+      PRISON_ESTATE_IPS: "0.0.0.0/0"
+      MOJSSO_URL: http://moj-sso:5000
+      MOJSSO_ID: 4444444444444444444444444444444444444444444444444444444444444444
+      REDIS_URL: redis://redis:6379/1
+      MOJSSO_SECRET: 2222222222222222222222222222222222222222222222222222222222222222
+      NOMIS_API_HOST: https://noms-api-dev.dsd.io
+      NOMIS_API_KEY: MHcCAQEEINAI6rBPpPWvCFZpyyBQZTSKuzCKds3CXNNwOtLAdNpkoAoGCCqGSM49AwEHoUQDQgAEPYlvBIlMx3RZ1SmNMELTB8IFKLaztTjPnW61nnx+OjUHJkveZ5zq3RjQmFwVdutTvdCapx9txdKSMRkZs5FtEQ==
+      NOMIS_API_TOKEN: eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJpYXQiOjE0Nzk5ODU5NzksImV4cCI6MTUxMTUyMTk3OSwiY2xpZW50IjoicHZiLWhlcm9rdS1zdGFmZiIsImtleSI6Ik1Ga3dFd1lIS29aSXpqMENBUVlJS29aSXpqMERBUWNEUWdBRVBZbHZCSWxNeDNSWjFTbU5NRUxUQjhJRktMYXp0VGpQblc2MW5ueCtPalVISmt2ZVo1enEzUmpRbUZ3VmR1dFR2ZENhcHg5dHhkS1NNUmtaczVGdEVRPT0iLCJhY2Nlc3MiOlsiXlxcL25vbWlzYXBpXFwvIl19.0GZfx_BCgiyuwvvcBVcuMdvwX4jJ2mGvKRcHxPWDKE86WR-HpFV-Z5ExCKKkSbA9n8uq-U6LlA_L3hORc0_ziQ
+      NOMIS_PUBLIC_PRISONER_AVAILABILITY_ENABLED: false
+      NOMIS_PUBLIC_PRISONER_CHECK_ENABLED: true
+      NOMIS_STAFF_PRISONER_AVAILABILITY_ENABLED: true
+      NOMIS_STAFF_PRISONER_CHECK_ENABLED: true
+      NOMIS_STAFF_SLOT_AVAILABILITY_ENABLED: true
+      PUBLIC_PRISONS_WITH_SLOT_AVAILABILITY: Wormwood Scrubs, Pentonville, Frankland, Cardiff
+      SMTP_DOMAIN: mailtrap.io
+      SMTP_HOSTNAME: mailtrap.io
+      SMTP_PASSWORD: 5d8576f0bdf076
+      SMTP_PORT: 465
+      SMTP_USERNAME: 31861f9dad8ade
+      STAFF_PRISONS_WITH_NOMIS_CONTACT_LIST: Leeds
+      STAFF_PRISONS_WITH_SLOT_AVAILABILITY: Wormwood Scrubs, Pentonville, Frankland, Cardiff
+  - id: pvbteam/prison-visits-public
+    name: pvb-public
+    tag: wercker-spike-595a51f83c2e15000196b062
+    cmd: /pipeline/source/bin/rails s -p 4000 -b 0.0.0.0
+    ports:
+      - "4000"
+    env:
+      PRISON_VISITS_API: http://pvb2:3000/
 
-    # - mongo
-    # http://devcenter.wercker.com/docs/services/mongodb.html
 
-# This is the build pipeline. Pipelines are the core of wercker
-# Read more about pipelines on our dev center
-# http://devcenter.wercker.com/docs/pipelines/index.html
+dev:
+  steps:
+
+    - install-packages:
+        packages: nodejs xvfb iceweasel
+        clear-cache: false
+    - bundle-install
+    - internal/shell:
+        code: |
+          Xvfb :99 &
+          cd $WERCKER_SOURCE_DIR
+
 build:
-    # Steps make up the actions in your pipeline
-    # Read more about steps on our dev center:
-    # http://devcenter.wercker.com/docs/steps/index.html
-    steps:
-      - install-packages:
-          packages: nodejs xvfb iceweasel
-          clear-cache: false
-      - bundle-install
-      - script:
-          name: rspec
-          code: bundle exec rspec
-      - internal/docker-push:
-          username: $POSTGRES_USERNAME
-          password: $POSTGRES_PASSWORD
-          tag: $WERCKER_GIT_BRANCH-$WERCKER_BUILD_ID
-          repository: pvbteam/prison-visits-integration-tests
-
-test:
-  services:
-    - id: postgres:9.4
-      name: postgres
-      env:
-        POSTGRES_PASSWORD: $POSTGRES_PASSWORD
-        POSTGRES_USER: $POSTGRES_USER
-    - id: pvbteam/prison-visits-2
-      name: pvb2
-      # tag: wercker-spike-595a42033c2e150001968cae
-      entrypoint: ./run-test.sh
-      ports:
-        - "3000"
-      env:
-        PRISON_ESTATE_IPS: "0.0.0.0/0"
-        MOJSSO_URL: https://www.signon.dsd.io
-        MOJSSO_ID: ac3529fe8e769d85f57eb6fce4c8c622c5c06de64e5ee62510b6235e435608ed
-        MOJSSO_SESSION: 68297ad6f105f6b3ed2e463407b0f235ca304d8463a8a838db419a419428af76
-        NOMIS_API_HOST: https://noms-api-dev.dsd.io
-        NOMIS_API_KEY: MHcCAQEEINAI6rBPpPWvCFZpyyBQZTSKuzCKds3CXNNwOtLAdNpkoAoGCCqGSM49AwEHoUQDQgAEPYlvBIlMx3RZ1SmNMELTB8IFKLaztTjPnW61nnx+OjUHJkveZ5zq3RjQmFwVdutTvdCapx9txdKSMRkZs5FtEQ==
-        NOMIS_API_TOKEN: eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJpYXQiOjE0Nzk5ODU5NzksImV4cCI6MTUxMTUyMTk3OSwiY2xpZW50IjoicHZiLWhlcm9rdS1zdGFmZiIsImtleSI6Ik1Ga3dFd1lIS29aSXpqMENBUVlJS29aSXpqMERBUWNEUWdBRVBZbHZCSWxNeDNSWjFTbU5NRUxUQjhJRktMYXp0VGpQblc2MW5ueCtPalVISmt2ZVo1enEzUmpRbUZ3VmR1dFR2ZENhcHg5dHhkS1NNUmtaczVGdEVRPT0iLCJhY2Nlc3MiOlsiXlxcL25vbWlzYXBpXFwvIl19.0GZfx_BCgiyuwvvcBVcuMdvwX4jJ2mGvKRcHxPWDKE86WR-HpFV-Z5ExCKKkSbA9n8uq-U6LlA_L3hORc0_ziQ
-    - id: pvbteam/prison-visits-public
-      name: pvb-public
-      tag: wercker-spike-595a51f83c2e15000196b062
-      cmd: /pipeline/source/bin/rails s -p 4000 -b 0.0.0.0
-      ports:
-        - "4000"
-      env:
-        PRISON_VISITS_API: http://$PVB2_PORT_3000_TCP_ADDR:3000/
   steps:
     - install-packages:
-        packages: curl nodejs xvfb iceweasel
+        packages: nodejs xvfb iceweasel
+        clear-cache: false
+    - bundle-install
+    - script:
+        name: rspec
+        code: bundle exec rspec
+    - internal/docker-push:
+        username: $POSTGRES_USERNAME
+        password: $POSTGRES_PASSWORD
+        tag: $WERCKER_GIT_BRANCH-$WERCKER_BUILD_ID
+        repository: pvbteam/prison-visits-integration-tests
+
+test:
+  steps:
+    - install-packages:
+        packages: nodejs xvfb iceweasel
         clear-cache: false
     - bundle-install
     - script:
       name: trigger integration tests
       code: |
-        printenv
         Xvfb :99 &
         export DISPLAY=:99
         export RAILS_ENV=test
-        export START_PAGE="http://$PVB_PUBLIC_PORT_4000_TCP_ADDR:4000/en/request"
-        export PRISON_START_PAGE="http://$PVB2_PORT_3000_TCP_ADDR:3000/prison/inbox"
+        export START_PAGE=http://pvb-public:4000/en/request
+        export PRISON_START_PAGE=http://pvb2:3000/prison/inbox
         export MAILTRAP_API_TOKEN=c9131d7e17802b22b89547c815a2da78
         export EMAIL=martyn.loughran+integration@digital.justice.gov.uk
         export PASSWORD=readinggaol
-        export SSO_EMAIL=alan.kennedy+integration@digital.justice.gov.uk
-        export SSO_PASSWORD=gonomisapigo
+        export SSO_EMAIL=user@example.com
+        export SSO_PASSWORD=password
         export PRISON=Leeds
         export PRISONER_NUMBER=A1410AE
         export PRISONER_DOB=1960-06-01
-        PUBLIC_PRISONER_CHECK=true
+        export PUBLIC_PRISONER_CHECK=true
         bundle exec rspec spec/
