@@ -62,9 +62,9 @@ RSpec.feature 'booking a visit', type: :feature do
     # Fetch 'booking requested' email sent to prisoner
     # Tends to take ~ 2s locally for emails to be delivered and available via
     # API, so being generous to avoid false positives
-    emails = retry_for(10, ->(emails) { emails.any? }) {
+    emails = retry_for(100, ->(mailbox) { mailbox.any? }) do
       Mailtrap.instance.search_messages(visitor.email)
-    }
+    end
     # Since the email is unique only a single email should have been returned
     expect(emails.size).to eq(1)
     email = emails.first
