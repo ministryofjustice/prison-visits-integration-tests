@@ -4,3 +4,4 @@ screenshots
 .ruby-gemset
 tags
 .bundle
+.wercker/

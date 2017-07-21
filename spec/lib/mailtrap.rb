@@ -36,9 +36,9 @@ class Mailtrap
       query: query,
       expects: [200],
       idempotent: true
-    })
+                               })
     messages = JSON.parse(response.body)
-    emails = messages.map { |e| Email.parse(e) }
+    messages.map { |e| Email.parse(e) }
   end
 
   # The search API is rather limited: AFAICT it's something like a prefix match
