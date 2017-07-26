@@ -9,7 +9,7 @@ Capybara.save_path = File.expand_path('../screenshots', __dir__)
 RSpec.configure do |config|
   config.disable_monkey_patching!
   config.before(:all) do
-    page.driver.browser.manage.window.resize_to(1900, 1200)
+    # page.driver.browser.manage.window.resize_to(1900, 1200)
   end
 end
 
