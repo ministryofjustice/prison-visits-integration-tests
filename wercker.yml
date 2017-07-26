@@ -10,8 +10,8 @@ services:
   - id: moj-sso
     name: moj-sso
     registry: https://registry.service.dsd.io
-    username: REGISTRY_USERNAME
-    password: REGISTRY_PASSWORD
+    username: $REGISTRY_USERNAME
+    password: $REGISTRY_PASSWORD
     ports:
       - "5000"
     env:
