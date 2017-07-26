@@ -9,61 +9,61 @@ services:
       POSTGRES_USER: $POSTGRES_USER
   - id: moj-sso
     name: moj-sso
-    registry: https://registry.service.dsd.io
     username: $REGISTRY_USERNAME
     password: $REGISTRY_PASSWORD
+    registry: https://registry.service.dsd.io/v1
     ports:
       - "5000"
     env:
       PORT: 5000
     entrypoint: ./run-test.sh
-  - id: pvb
-    registry: $REGISTRY_URL
-    username: $REGISTRY_USERNAME
-    password: $REGISTRY_PASSWORD
-    name: pvb2
-    entrypoint: /pipeline/source/run-test.sh
-    ports:
-      - "3000"
-    env:
-      PRISON_ESTATE_IPS: "0.0.0.0/0"
-      MOJSSO_URL: http://moj-sso:5000
-      MOJSSO_ID: 4444444444444444444444444444444444444444444444444444444444444444
-      REDIS_URL: redis://redis:6379/1
-      MOJSSO_SECRET: 2222222222222222222222222222222222222222222222222222222222222222
-      NOMIS_API_HOST: https://noms-api-dev.dsd.io
-      NOMIS_API_KEY: MHcCAQEEINAI6rBPpPWvCFZpyyBQZTSKuzCKds3CXNNwOtLAdNpkoAoGCCqGSM49AwEHoUQDQgAEPYlvBIlMx3RZ1SmNMELTB8IFKLaztTjPnW61nnx+OjUHJkveZ5zq3RjQmFwVdutTvdCapx9txdKSMRkZs5FtEQ==
-      NOMIS_API_TOKEN: eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJpYXQiOjE0Nzk5ODU5NzksImV4cCI6MTUxMTUyMTk3OSwiY2xpZW50IjoicHZiLWhlcm9rdS1zdGFmZiIsImtleSI6Ik1Ga3dFd1lIS29aSXpqMENBUVlJS29aSXpqMERBUWNEUWdBRVBZbHZCSWxNeDNSWjFTbU5NRUxUQjhJRktMYXp0VGpQblc2MW5ueCtPalVISmt2ZVo1enEzUmpRbUZ3VmR1dFR2ZENhcHg5dHhkS1NNUmtaczVGdEVRPT0iLCJhY2Nlc3MiOlsiXlxcL25vbWlzYXBpXFwvIl19.0GZfx_BCgiyuwvvcBVcuMdvwX4jJ2mGvKRcHxPWDKE86WR-HpFV-Z5ExCKKkSbA9n8uq-U6LlA_L3hORc0_ziQ
-      NOMIS_PUBLIC_PRISONER_AVAILABILITY_ENABLED: false
-      NOMIS_PUBLIC_PRISONER_CHECK_ENABLED: true
-      NOMIS_STAFF_PRISONER_AVAILABILITY_ENABLED: true
-      NOMIS_STAFF_PRISONER_CHECK_ENABLED: true
-      NOMIS_STAFF_SLOT_AVAILABILITY_ENABLED: true
-      PUBLIC_PRISONS_WITH_SLOT_AVAILABILITY: Wormwood Scrubs, Pentonville, Frankland, Cardiff
-      SMTP_DOMAIN: smtp.mailtrap.io
-      SMTP_HOSTNAME:  smtp.mailtrap.io
-      SMTP_PASSWORD: 5d8576f0bdf076
-      SMTP_PORT: 465
-      SMTP_USERNAME: 31861f9dad8ade
-      STAFF_PRISONS_WITH_NOMIS_CONTACT_LIST: Leeds
-      STAFF_PRISONS_WITH_SLOT_AVAILABILITY: Wormwood Scrubs, Pentonville, Frankland, Cardiff
-      PUBLIC_SERVICE_URL: http://pvb-public:4000
-      SECRET_KEY_BASE: e51c483747091efa688cba3d4942ed3fc06499007d12c16e5086ef17251ffe486ae1fb2a1adaaca7f11075f0a70d49733f5c5f29d6edee878a393e69f94874ae
-      RAILS_SERVE_STATIC_FILES: true
-  - id: pvbpublic
-    name: pvb-public
-    registry: $REGISTRY_URL
-    username: $REGISTRY_USERNAME
-    password: $REGISTRY_PASSWORD
-    tag: latest
-    entrypoint: ./run-test.sh
-    ports:
-      - "4000"
-    env:
-      PRISON_VISITS_API: http://pvb2:3000/
-      STAFF_SERVICE_URL: http://pvb2:3000
-      SECRET_KEY_BASE: b24f794d900d6eae8fc684faa02c29eb07aeb149d80ea272c137ae2d6c4b744c401cf375728d67237153846b2fade059121d19246af4ab983f829d925c92b478
-      RAILS_SERVE_STATIC_FILES: true
+  # - id: pvb
+  #   registry: $REGISTRY_URL
+  #   username: $REGISTRY_USERNAME
+  #   password: $REGISTRY_PASSWORD
+  #   name: pvb2
+  #   entrypoint: /pipeline/source/run-test.sh
+  #   ports:
+  #     - "3000"
+  #   env:
+  #     PRISON_ESTATE_IPS: "0.0.0.0/0"
+  #     MOJSSO_URL: http://moj-sso:5000
+  #     MOJSSO_ID: 4444444444444444444444444444444444444444444444444444444444444444
+  #     REDIS_URL: redis://redis:6379/1
+  #     MOJSSO_SECRET: 2222222222222222222222222222222222222222222222222222222222222222
+  #     NOMIS_API_HOST: https://noms-api-dev.dsd.io
+  #     NOMIS_API_KEY: MHcCAQEEINAI6rBPpPWvCFZpyyBQZTSKuzCKds3CXNNwOtLAdNpkoAoGCCqGSM49AwEHoUQDQgAEPYlvBIlMx3RZ1SmNMELTB8IFKLaztTjPnW61nnx+OjUHJkveZ5zq3RjQmFwVdutTvdCapx9txdKSMRkZs5FtEQ==
+  #     NOMIS_API_TOKEN: eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJpYXQiOjE0Nzk5ODU5NzksImV4cCI6MTUxMTUyMTk3OSwiY2xpZW50IjoicHZiLWhlcm9rdS1zdGFmZiIsImtleSI6Ik1Ga3dFd1lIS29aSXpqMENBUVlJS29aSXpqMERBUWNEUWdBRVBZbHZCSWxNeDNSWjFTbU5NRUxUQjhJRktMYXp0VGpQblc2MW5ueCtPalVISmt2ZVo1enEzUmpRbUZ3VmR1dFR2ZENhcHg5dHhkS1NNUmtaczVGdEVRPT0iLCJhY2Nlc3MiOlsiXlxcL25vbWlzYXBpXFwvIl19.0GZfx_BCgiyuwvvcBVcuMdvwX4jJ2mGvKRcHxPWDKE86WR-HpFV-Z5ExCKKkSbA9n8uq-U6LlA_L3hORc0_ziQ
+  #     NOMIS_PUBLIC_PRISONER_AVAILABILITY_ENABLED: false
+  #     NOMIS_PUBLIC_PRISONER_CHECK_ENABLED: true
+  #     NOMIS_STAFF_PRISONER_AVAILABILITY_ENABLED: true
+  #     NOMIS_STAFF_PRISONER_CHECK_ENABLED: true
+  #     NOMIS_STAFF_SLOT_AVAILABILITY_ENABLED: true
+  #     PUBLIC_PRISONS_WITH_SLOT_AVAILABILITY: Wormwood Scrubs, Pentonville, Frankland, Cardiff
+  #     SMTP_DOMAIN: smtp.mailtrap.io
+  #     SMTP_HOSTNAME:  smtp.mailtrap.io
+  #     SMTP_PASSWORD: 5d8576f0bdf076
+  #     SMTP_PORT: 465
+  #     SMTP_USERNAME: 31861f9dad8ade
+  #     STAFF_PRISONS_WITH_NOMIS_CONTACT_LIST: Leeds
+  #     STAFF_PRISONS_WITH_SLOT_AVAILABILITY: Wormwood Scrubs, Pentonville, Frankland, Cardiff
+  #     PUBLIC_SERVICE_URL: http://pvb-public:4000
+  #     SECRET_KEY_BASE: e51c483747091efa688cba3d4942ed3fc06499007d12c16e5086ef17251ffe486ae1fb2a1adaaca7f11075f0a70d49733f5c5f29d6edee878a393e69f94874ae
+  #     RAILS_SERVE_STATIC_FILES: true
+  # - id: pvbpublic
+  #   name: pvb-public
+  #   registry: $REGISTRY_URL
+  #   username: $REGISTRY_USERNAME
+  #   password: $REGISTRY_PASSWORD
+  #   tag: latest
+  #   entrypoint: ./run-test.sh
+  #   ports:
+  #     - "4000"
+  #   env:
+  #     PRISON_VISITS_API: http://pvb2:3000/
+  #     STAFF_SERVICE_URL: http://pvb2:3000
+  #     SECRET_KEY_BASE: b24f794d900d6eae8fc684faa02c29eb07aeb149d80ea272c137ae2d6c4b744c401cf375728d67237153846b2fade059121d19246af4ab983f829d925c92b478
+  #     RAILS_SERVE_STATIC_FILES: true
 dev:
   steps:
     - install-packages:
