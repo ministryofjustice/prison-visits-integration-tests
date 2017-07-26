@@ -7,16 +7,22 @@ services:
     env:
       POSTGRES_PASSWORD: $POSTGRES_PASSWORD
       POSTGRES_USER: $POSTGRES_USER
-  - id: pvbteam/moj-sso
+  - id: moj-sso
     name: moj-sso
+    registry: https://registry.service.dsd.io
+    username: REGISTRY_USERNAME
+    password: REGISTRY_PASSWORD
     ports:
       - "5000"
     env:
       PORT: 5000
     entrypoint: ./run-test.sh
-  - id: pvbteam/prison-visits-2
+  - id: pvb
+    registry: $REGISTRY_URL
+    username: $REGISTRY_USERNAME
+    password: $REGISTRY_PASSWORD
     name: pvb2
-    entrypoint: ./run-test.sh
+    entrypoint: /pipeline/source/run-test.sh
     ports:
       - "3000"
     env:
@@ -41,33 +47,43 @@ services:
       SMTP_USERNAME: 31861f9dad8ade
       STAFF_PRISONS_WITH_NOMIS_CONTACT_LIST: Leeds
       STAFF_PRISONS_WITH_SLOT_AVAILABILITY: Wormwood Scrubs, Pentonville, Frankland, Cardiff
-      PUBLIC_SERVICE_URL: http://pvb-public:3000
+      PUBLIC_SERVICE_URL: http://pvb-public:4000
       SECRET_KEY_BASE: e51c483747091efa688cba3d4942ed3fc06499007d12c16e5086ef17251ffe486ae1fb2a1adaaca7f11075f0a70d49733f5c5f29d6edee878a393e69f94874ae
       RAILS_SERVE_STATIC_FILES: true
-      SENTRY_DSN: https://646d39eed2b34bbcbbec89fe884ad4e5:048707cca296401bbfbf90526f1d49fe@sentry.service.dsd.io/59
-  - id: pvbteam/prison-visits-public
+  - id: pvbpublic
     name: pvb-public
+    registry: $REGISTRY_URL
+    username: $REGISTRY_USERNAME
+    password: $REGISTRY_PASSWORD
     tag: latest
     entrypoint: ./run-test.sh
+    ports:
+      - "4000"
     env:
       PRISON_VISITS_API: http://pvb2:3000/
       STAFF_SERVICE_URL: http://pvb2:3000
       SECRET_KEY_BASE: b24f794d900d6eae8fc684faa02c29eb07aeb149d80ea272c137ae2d6c4b744c401cf375728d67237153846b2fade059121d19246af4ab983f829d925c92b478
       RAILS_SERVE_STATIC_FILES: true
-    ports:
-      - "4000"
 dev:
   steps:
     - install-packages:
-        packages: nodejs xvfb iceweasel
-        clear-cache: false
+        packages: xvfb iceweasel
     - bundle-install
+    - script:
+        name: install geckodrive
+        code: |
+          if [ ! -f /usr/local/bin/geckodriver ]; then
+            cd $WERCKER_CACHE_DIR
+            curl -L  -O https://github.com/mozilla/geckodriver/releases/download/v0.18.0/geckodriver-v0.18.0-linux64.tar.gz
+            tar -xvzf geckodriver-v0.18.0-linux64.tar.gz
+            chmod +x geckodriver
+            mv geckodriver /usr/local/bin/
+          fi
     - internal/shell:
         code: |
           Xvfb :99 &
           export DISPLAY=:99
-          export RAILS_ENV=test
-          export START_PAGE=http://pvb-public:3000/en/request
+          export START_PAGE=http://pvb-public:4000/en/request
           export PRISON_START_PAGE=http://pvb2:3000/prison/inbox
           export MAILTRAP_API_TOKEN=c9131d7e17802b22b89547c815a2da78
           export EMAIL=martyn.loughran+integration@digital.justice.gov.uk
@@ -86,6 +102,13 @@ build:
         clear-cache: false
     - bundle-install
     - script:
+        name: install geckodrive
+        code: |
+          cd $WERCKER_CACHE_DIR
+          curl -O https://github.com/mozilla/geckodriver/releases/download/v0.18.0/geckodriver-v0.18.0-linux64.tar.gz
+          tar -xvzf geckodriver*
+          ln -s geckodriver-v0.18.0-linux64/geckodriver /usr/local/bin/
+    - script:
         name: rspec
         code: bundle exec rspec
     - internal/docker-push:
@@ -97,16 +120,24 @@ build:
 test:
   steps:
     - install-packages:
-        packages: nodejs xvfb iceweasel
-        clear-cache: false
+        packages: xvfb iceweasel
+    - script:
+        name: install geckodrive
+        code: |
+          if [ ! -f /usr/local/bin/geckodriver ]; then
+            cd $WERCKER_CACHE_DIR
+            curl -L  -O https://github.com/mozilla/geckodriver/releases/download/v0.18.0/geckodriver-v0.18.0-linux64.tar.gz
+            tar -xvzf geckodriver-v0.18.0-linux64.tar.gz
+            chmod +x geckodriver
+            mv geckodriver /usr/local/bin/
+          fi
     - bundle-install
     - script:
       name: trigger integration tests
       code: |
         Xvfb :99 &
         export DISPLAY=:99
-        export RAILS_ENV=test
-        export START_PAGE=http://pvb-public:3000/en/request
+        export START_PAGE=http://pvb-public:4000/en/request
         export PRISON_START_PAGE=http://pvb2:3000/prison/inbox
         export MAILTRAP_API_TOKEN=c9131d7e17802b22b89547c815a2da78
         export EMAIL=martyn.loughran+integration@digital.justice.gov.uk

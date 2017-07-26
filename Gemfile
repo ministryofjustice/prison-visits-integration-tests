@@ -3,7 +3,7 @@ ruby '2.4.1'
 
 gem 'capybara'
 gem 'capybara-screenshot'
-gem 'selenium-webdriver', '~> 2.13'
+gem 'selenium-webdriver'
 gem 'excon'
 gem 'faker'
 gem 'rspec'
