@@ -31,6 +31,9 @@ RSpec.feature 'process a booking', type: :feature do
 
       login_as_staff
       select_prison_for_processing
+
+      expect(page).to have_css('tr:not(.hidden-row)')
+
       # The most recent requested visit
       all('tr:not(.hidden-row)').last.click_link('View')
 
@@ -81,7 +84,8 @@ RSpec.feature 'process a booking', type: :feature do
     end
 
     scenario 'Clean All of the Cancelled visits' do
-      while submit_button = page.first('table tbody td form input[type="submit"]')
+
+      while submit_button = page.first('table tbody td form input:not([disabled])[type="submit"]')
         submit_button.click
         expect(page).to have_css('h3.heading-medium', text: 'Cancellations')
       end

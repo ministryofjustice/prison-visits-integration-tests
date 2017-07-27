@@ -23,6 +23,7 @@ def login_as_staff
 end
 
 def select_prison_for_processing
+  expect(page).to have_css('#estate_ids_chosen li.search-field')
   first('#estate_ids_chosen li.search-field input.chosen-search-input').click
   prison_li = all('.chosen-drop ul.chosen-results li').detect do|li|
     li.text == ENV.fetch('PRISON') do
