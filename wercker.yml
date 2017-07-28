@@ -144,5 +144,4 @@ test:
       code: |
         Xvfb :99 &
         export DISPLAY=:99
-        printenv
         bundle exec rspec spec/
