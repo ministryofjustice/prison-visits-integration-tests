@@ -120,7 +120,6 @@ build:
 
 test:
   steps:
-    - internal/store-container
     - script:
         name: wait for pvb public
         code: |
@@ -145,3 +144,4 @@ test:
         Xvfb :99 &
         export DISPLAY=:99
         bundle exec rspec spec/
+    - internal/store-container
