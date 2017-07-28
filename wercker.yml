@@ -13,6 +13,7 @@ services:
       POSTGRES_USER: $POSTGRES_USERNAME
 
   - id: pvbteam/prison-visits-2
+    tag: $DOCKER_PVB2_TAG
     name: pvb2
     entrypoint: /pipeline/source/run-test.sh
     ports:
@@ -44,7 +45,7 @@ services:
 
   - id: pvbteam/prison-visits-public
     name: pvb-public
-    tag: latest
+    tag: $DOCKER_PVB_PUBLIC_TAG
     cmd: /pipeline/source/run-test.sh
     ports:
       - "4000"
@@ -55,6 +56,7 @@ services:
 
   - id: pvbteam/prison-visits-2
     name: pvb2-sidekiq
+    tag: $DOCKER_PVB2_TAG
     entrypoint: /pipeline/source/run-sidekiq-test.sh
     env:
       PRISON_ESTATE_IPS: $PRISON_ESTATE_IPS
@@ -112,11 +114,6 @@ build:
     - script:
         name: rspec
         code: bundle exec rspec
-    - internal/docker-push:
-        username: $POSTGRES_USERNAME
-        password: $POSTGRES_PASSWORD
-        tag: $WERCKER_GIT_BRANCH-$WERCKER_BUILD_ID
-        repository: pvbteam/prison-visits-integration-tests
 
 test:
   steps:
@@ -144,4 +141,3 @@ test:
         Xvfb :99 &
         export DISPLAY=:99
         bundle exec rspec spec/
-    - internal/store-container
