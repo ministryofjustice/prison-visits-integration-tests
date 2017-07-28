@@ -131,7 +131,7 @@ test:
           done;
           echo pvb public connected!;
     - script:
-        name: wait for pvb public
+        name: wait for pvb staff
         code: |
           while ! nc -z pvb2 3000;
           do
