@@ -12,7 +12,7 @@ services:
       POSTGRES_PASSWORD: $POSTGRES_PASSWORD
       POSTGRES_USER: $POSTGRES_USERNAME
 
-  - id: pvbteam/prison-visits-2:$PVB_STAFF_DOCKER_TAG
+  - id: pvbteam/prison-visits-2
     name: pvb2
     entrypoint: /pipeline/source/run-test.sh
     ports:
@@ -42,7 +42,7 @@ services:
       PUBLIC_SERVICE_URL: $PUBLIC_SERVICE_URL
       RAILS_SERVE_STATIC_FILES: $RAILS_SERVE_STATIC_FILES
 
-  - id: pvbteam/prison-visits-public:$PVB_PUBLIC_DOCKER_TAG
+  - id: pvbteam/prison-visits-public
     name: pvb-public
     tag: latest
     cmd: /pipeline/source/run-test.sh
@@ -53,7 +53,7 @@ services:
       STAFF_SERVICE_URL: http://pvb2:3000/
       RAILS_SERVE_STATIC_FILES: true
 
-  - id: pvbteam/prison-visits-2:$PVB_STAFF_DOCKER_TAG
+  - id: pvbteam/prison-visits-2
     name: pvb2-sidekiq
     entrypoint: /pipeline/source/run-sidekiq-test.sh
     env:
