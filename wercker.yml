@@ -144,7 +144,7 @@ test:
         name: report to repository
         code: |
           printenv
-          if [[ $BUILD_STATUS == "success" ]]; then
+          if [[ $WERCKER_RESULT == "passed" ]]; then
             export STATUS="success"
           else
             export STATUS="failure"
