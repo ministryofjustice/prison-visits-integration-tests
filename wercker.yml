@@ -143,14 +143,13 @@ test:
     - script:
         name: report to repository
         code: |
-          printenv
           if [[ $WERCKER_RESULT == "passed" ]]; then
             export STATUS="success"
           else
             export STATUS="failure"
           fi
 
-          curl -v "https://api.github.com/repos/$WERCKER_GIT_OWNER/$TARGET_GIT_REPOSITORY/statuses/$TARGET_GIT_REPOSITORY_COMMIT?access_token=$GITHUB_ACCESS_TOKEN" \
+          curl "https://api.github.com/repos/$WERCKER_GIT_OWNER/$TARGET_GIT_REPOSITORY/statuses/$TARGET_GIT_REPOSITORY_COMMIT?access_token=$GITHUB_ACCESS_TOKEN" \
           -H "Content-Type: application/json" \
           -X POST \
-          -d "{\"state\": \"$STATUS\", \"description\": \"Integration Tests\", \"target_url\": \"$WERCKER_RUN_URL\"}"
+          -d "{\"state\": \"$STATUS\", \"description\": \"Integration Tests\", \"target_url\": \"$WERCKER_RUN_URL\", \"context\": \"wercker/integration-tests\"}"
