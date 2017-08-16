@@ -111,7 +111,7 @@ build:
   steps:
     - script:
         name: rspec
-        code: bundle exec rspec
+        code: xvfb-run bundle exec rspec
 
 test:
   steps:
