@@ -110,6 +110,24 @@ dev:
 build:
   steps:
     - script:
+        name: wait for pvb public
+        code: |
+          while ! nc -z pvb-public 4000;
+          do
+            echo sleeping;
+            sleep 1;
+          done;
+          echo pvb public connected!;
+    - script:
+        name: wait for pvb staff
+        code: |
+          while ! nc -z pvb2 3000;
+          do
+            echo sleeping;
+            sleep 1;
+          done;
+          echo pvb2 connected!;
+    - script:
         name: rspec
         code: xvfb-run bundle exec rspec
 
