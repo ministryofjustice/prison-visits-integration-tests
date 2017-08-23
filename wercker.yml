@@ -111,6 +111,7 @@ build:
     - script:
         name: wait for pvb public
         code: |
+          printenv
           while ! nc -z pvb-public 4000;
           do
             echo sleeping;
