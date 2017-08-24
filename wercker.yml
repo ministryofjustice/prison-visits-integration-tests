@@ -112,7 +112,6 @@ build:
         name: wait for pvb public
         code: |
           printenv
-          echo "aerwerwex"
           while ! nc -z pvb-public 4000;
           do
             echo sleeping;
