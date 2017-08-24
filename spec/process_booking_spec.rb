@@ -34,6 +34,7 @@ RSpec.feature 'process a booking', type: :feature do
 
       expect(page).to have_css('tr:not(.hidden-row)')
 
+      puts page.body
       # The most recent requested visit
       all('tr:not(.hidden-row)').last.click_link('View')
 
