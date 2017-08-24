@@ -129,7 +129,10 @@ build:
           echo pvb2 connected!;
     - script:
         name: rspec
-        code: xvfb-run bundle exec rspec
+        code: |
+          Xvfb :99 &
+          export DISPLAY=:99
+          bundle exec rspec
 
 test:
   steps:
