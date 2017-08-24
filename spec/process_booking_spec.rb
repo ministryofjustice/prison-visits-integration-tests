@@ -31,10 +31,10 @@ RSpec.feature 'process a booking', type: :feature do
 
       login_as_staff
       select_prison_for_processing
-
+      puts page.body
       expect(page).to have_css('tr:not(.hidden-row)')
 
-      puts page.body
+
       # The most recent requested visit
       all('tr:not(.hidden-row)').last.click_link('View')
 
