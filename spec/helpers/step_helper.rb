@@ -50,6 +50,7 @@ def make_booking(prisoner, visitor)
   fill_in_visitor_step(visitor)
   click_button 'Continue'
   click_button 'Send visit request'
+  expect(page).to have_content 'Visit request sent'
 end
 
 def fill_in_prisoner_step(prisoner)
