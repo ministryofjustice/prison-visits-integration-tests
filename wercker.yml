@@ -136,6 +136,14 @@ build:
 test:
   steps:
     - script:
+        name: notify github
+        code: |
+          curl "https://api.github.com/repos/$WERCKER_GIT_OWNER/$TARGET_GIT_REPOSITORY/statuses/$TARGET_GIT_REPOSITORY_COMMIT?access_token=$GITHUB_ACCESS_TOKEN" \
+          -H "Content-Type: application/json" \
+          -X POST \
+          -d "{\"state\": \"pending\", \"description\": \"Integration Tests\", \"target_url\": \"$WERCKER_RUN_URL\", \"context\": \"wercker/integration-tests\"}"
+
+    - script:
         name: wait for pvb public
         code: |
           while ! nc -z pvb-public 4000;
