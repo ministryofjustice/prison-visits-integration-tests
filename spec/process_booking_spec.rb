@@ -31,7 +31,6 @@ RSpec.feature 'process a booking', type: :feature do
 
       login_as_staff
       select_prison_for_processing
-      puts page.body
       expect(page).to have_css('tr:not(.hidden-row)')
 
 
@@ -62,9 +61,6 @@ RSpec.feature 'process a booking', type: :feature do
 
       confirmation_email = retry_for(180, ->(email) { email }) {
         visitor_emails = Mailtrap.instance.search_messages(visitor.email)
-
-        # Log messages returned by the API to aid debugging
-        puts "Matched email subjects: #{visitor_emails.map(&:subject)}"
 
         visitor_emails.find { |email| email.subject =~ /^Visit confirmed/ }
       }
