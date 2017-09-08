@@ -63,8 +63,8 @@ def fill_in_prisoner_step(prisoner)
 end
 
 def select_prison(name)
-  find('input[data-input-name="prisoner_step[prison_id]"]')
-    .set(name)
+  fill_in 'Prison name', with: name
+  find('.ui-autocomplete a', text: name).click
 end
 
 def fill_in_visitor_step(visitor)
