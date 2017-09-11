@@ -8,7 +8,8 @@ gem 'excon'
 gem 'faker'
 gem 'rspec'
 gem 'byebug'
+gem 'google-api-client'
+
 group :development do
   gem 'pry'
-
 end

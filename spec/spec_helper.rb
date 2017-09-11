@@ -13,6 +13,8 @@ RSpec.configure do |config|
   end
 end
 
+require_relative 'helpers/google_analytics_helper'
 require_relative 'helpers/step_helper'
 require_relative 'helpers/retry_helper'
 require_relative 'lib/mailtrap'
+require_relative 'lib/google_analytics'
