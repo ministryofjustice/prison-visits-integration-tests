@@ -37,6 +37,8 @@ RSpec.feature 'process a booking', type: :feature do
       # The most recent requested visit
       all('tr:not(.hidden-row)').last.click_link('View')
 
+      processing_path = page.current_path
+
       expect(page).to have_css('.bold-small', text: [prisoner_first_name, prisoner_last_name].join(' '))
       expect(page).to have_css('.name', text: 'Peter Sellers')
 
@@ -71,6 +73,11 @@ RSpec.feature 'process a booking', type: :feature do
       check_yes_cancel
       click_button 'Cancel visit'
       expect(page).to have_content('Your visit is cancelled')
+
+
+      # Give time to GA to do its indexing
+      sleep(1)
+      expect(google_analytics.pvb2_url_count(processing_path)).to eq(1)
     end
   end
 
