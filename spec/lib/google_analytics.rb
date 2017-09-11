@@ -45,6 +45,9 @@ class GoogleAnalytics
   def analytics
     @analytics ||=
       begin
+        # This is needed because CircleCI escapes new lines
+        ENV['GOOGLE_PRIVATE_KEY'] = ENV['GOOGLE_PRIVATE_KEY'].gsub("\\n", "\n")
+
         require 'google/apis/analytics_v3'
 
         Google::Apis::AnalyticsV3::AnalyticsService.new.tap do |obj|
