@@ -86,9 +86,7 @@ RSpec.feature 'booking a visit', type: :feature do
     expect(page).to have_content 'You cancelled this visit request'
 
     # Give time to GA to do its indexing
-    retry_for(100, -> (page_count) { page_count > 0 }) do
-
-      google_analytics.public_url_count(status_url)
-    end
+    sleep(1)
+    expect(google_analytics.public_url_count(status_url)).to be > (0)
   end
 end
