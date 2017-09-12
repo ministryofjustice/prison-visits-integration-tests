@@ -77,7 +77,7 @@ RSpec.feature 'process a booking', type: :feature do
 
       # Give time to GA to do its indexing
       sleep(1)
-      expect(google_analytics.pvb2_url_count(processing_path)).to eq(1)
+      expect(google_analytics.pvb2_url_count(processing_path)).to be > (0)
     end
   end
 
