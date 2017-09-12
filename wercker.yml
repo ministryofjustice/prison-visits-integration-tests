@@ -82,6 +82,7 @@ services:
 
 dev:
   steps:
+    - bundle-install
     - script:
         name: wait for pvb public
         code: |
@@ -132,7 +133,7 @@ build:
         code: |
           Xvfb :99 &
           export DISPLAY=:99
-          bundle exec rspec
+          bin/rspec
 
 test:
   steps:
