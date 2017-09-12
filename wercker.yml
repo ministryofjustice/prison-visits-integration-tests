@@ -108,6 +108,7 @@ dev:
 
 build:
   steps:
+    - bundle-install
     - script:
         name: wait for pvb public
         code: |
