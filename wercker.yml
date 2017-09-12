@@ -111,6 +111,9 @@ build:
   steps:
     - bundle-install
     - script:
+        name: printenv
+        code: printenv
+    - script:
         name: wait for pvb public
         code: |
           while ! nc -z pvb-public 4000;
