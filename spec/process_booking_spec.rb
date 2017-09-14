@@ -44,8 +44,8 @@ RSpec.feature 'process a booking', type: :feature do
 
       # NOMIS CHECKS
       expect(page).to have_css('.notice', text: 'The prisoner date of birth, prisoner number and prison name have been verified.')
-      expect(page).to have_css('.column-one-quarter', text: "Prisoner D.O.B #{prisoner.dob.strftime('%d/%m/%Y')} Verified")
-      expect(page).to have_css('.column-one-quarter', text: "Prisoner no. #{prisoner.number} Verified")
+      expect(page).to have_css('.column-one-quarter', text: "Prisoner D.O.B #{prisoner.dob.strftime('%d/%m/%Y')} NOMIS verified")
+      expect(page).to have_css('.column-one-quarter', text: "Prisoner no. #{prisoner.number} NOMIS verified")
 
       within '.choose-date' do
         first('label.date-box__label').click
