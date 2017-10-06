@@ -54,7 +54,7 @@ RSpec.feature 'process a booking', type: :feature do
       fill_in 'Reference number', with: '12345678'
 
       within '.visitor-contact-list' do
-        all('option')[1].select_option
+        all('option:not([disabled]')[1].select_option
       end
 
       click_button 'Process'
