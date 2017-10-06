@@ -4,12 +4,17 @@ ENV APP_HOME /app
 WORKDIR $APP_HOME
 
 # Install qt & xvfb (virtual X) for capybara-webkit
-RUN apt-get update -y; true && apt-get install -y xvfb iceweasel netcat
-RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.18.0/geckodriver-v0.18.0-linux64.tar.gz \
-         -O /tmp/geckodriver-v0.18.0-linux64.tar.gz && \
-         tar -xvzf /tmp/geckodriver-v0.18.0-linux64.tar.gz && \
+RUN apt-get update -y; true && apt-get install -y libgtk-3-0 ibgtk3.0-cil-dev libasound2 libasound2 libdbus-glib-1-2 libdbus-1-3  xvfb
+RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.19.0/geckodriver-v0.19.0-linux64.tar.gz \
+         -O /tmp/geckodriver-v0.19.0-linux64.tar.gz && \
+         tar -xvzf /tmp/geckodriver-v0.19.0-linux64.tar.gz && \
          mv geckodriver /usr/local/bin/ && \
-         rm -f /tmp/geckodriver-v0.18.0-linux64.tar.gz
+         rm -f /tmp/geckodriver-v0.19.0-linux64.tar.gz
+
+RUN wget -L https://ftp.mozilla.org/pub/firefox/releases/56.0/linux-x86_64/en-US/firefox-56.0.tar.bz2 -O firefox-56.0.tar.bz2 && \
+          tar xjf firefox-56.0.tar.bz2 && \
+          mv firefox /opt/ && \
+          ln -sf /opt/firefox/firefox /usr/bin/firefox
 
 # Bundle before copying the app so that we make use of the Docker cache
 ENV BUNDLE_GEMFILE=$APP_HOME/Gemfile \
@@ -24,5 +29,4 @@ COPY . .
 # This is a hack for the container's broken locale settings and can be removed
 # if a better solution is found
 ENV RUBYOPT="-KU -E utf-8:utf-8"
-
 ENTRYPOINT ["./run.sh"]
