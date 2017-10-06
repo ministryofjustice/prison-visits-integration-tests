@@ -5,7 +5,7 @@ require 'byebug'
 Capybara.default_driver = :selenium
 
 Capybara.save_path = File.expand_path('../screenshots', __dir__)
-Capybara.default_max_wait_time = 120
+Capybara.default_max_wait_time = 10
 RSpec.configure do |config|
   config.disable_monkey_patching!
   config.before(:all) do
