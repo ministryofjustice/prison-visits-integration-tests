@@ -64,4 +64,4 @@ jobs:
 
       # Save test results for timing analysis
       - store_test_results:
-          path: coverage
+          path: screenshots
