@@ -26,10 +26,7 @@ RSpec.feature 'process a booking', type: :feature do
 
   describe 'accept booking' do
 
-    context 'with book to nomis enabled' do
-
-    end
-    context 'with book to nomis disasbled' do
+    context 'with book to nomis disabled' do
       scenario 'then visitor cancels' do
         make_booking(prisoner, visitor)
 
@@ -54,11 +51,9 @@ RSpec.feature 'process a booking', type: :feature do
         within '.choose-date' do
           first('label.date-box__label').click
         end
-        # fill_in 'Reference number', with: '12345678'
+        fill_in 'Reference number', with: '12345678'
 
         within '.visitor-contact-list' do
-          byebug
-
           all('option:not([disabled]')[1].select_option
         end
 
