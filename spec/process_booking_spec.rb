@@ -26,58 +26,64 @@ RSpec.feature 'process a booking', type: :feature do
 
   describe 'accept booking' do
 
-    scenario 'then visitor cancels' do
-      make_booking(prisoner, visitor)
+    context 'with book to nomis enabled' do
 
-      login_as_staff
-      select_prison_for_processing
-      expect(page).to have_css('tr:not(.hidden-row)')
+    end
+    context 'with book to nomis disasbled' do
+      scenario 'then visitor cancels' do
+        make_booking(prisoner, visitor)
+
+        login_as_staff
+        select_prison_for_processing
+        expect(page).to have_css('tr:not(.hidden-row)')
 
 
-      # The most recent requested visit
-      all('tr:not(.hidden-row)').last.click_link('View')
+        # The most recent requested visit
+        all('tr:not(.hidden-row)').last.click_link('View')
 
-      processing_path = page.current_path
+        processing_path = page.current_path
 
-      expect(page).to have_css('.bold-small', text: [prisoner_first_name, prisoner_last_name].join(' '))
-      expect(page).to have_css('.name', text: 'Peter Sellers')
+        expect(page).to have_css('.bold-small', text: [prisoner_first_name, prisoner_last_name].join(' '))
+        expect(page).to have_css('.name', text: 'Peter Sellers')
 
-      # NOMIS CHECKS
-      expect(page).to have_css('.notice', text: 'The prisoner date of birth, prisoner number and prison name have been verified.')
-      expect(page).to have_css('.column-one-quarter', text: "Prisoner D.O.B #{prisoner.dob.strftime('%d/%m/%Y')} NOMIS verified")
-      expect(page).to have_css('.column-one-quarter', text: "Prisoner no. #{prisoner.number} NOMIS verified")
+        # NOMIS CHECKS
+        expect(page).to have_css('.notice', text: 'The prisoner date of birth, prisoner number and prison name have been verified.')
+        expect(page).to have_css('.column-one-quarter', text: "Prisoner D.O.B #{prisoner.dob.strftime('%d/%m/%Y')} NOMIS verified")
+        expect(page).to have_css('.column-one-quarter', text: "Prisoner no. #{prisoner.number} NOMIS verified")
 
-      within '.choose-date' do
-        first('label.date-box__label').click
+        within '.choose-date' do
+          first('label.date-box__label').click
+        end
+        # fill_in 'Reference number', with: '12345678'
+
+        within '.visitor-contact-list' do
+          byebug
+
+          all('option:not([disabled]')[1].select_option
+        end
+
+        click_button 'Process'
+
+        expect(page).to have_css('p.notification', text: 'Thank you for processing the visit')
+
+        confirmation_email = retry_for(180, ->(email) { email }) {
+          visitor_emails = Mailtrap.instance.search_messages(visitor.email)
+
+          visitor_emails.find { |email| email.subject =~ /^Visit confirmed/ }
+        }
+
+        cancel_url = email_link_href(confirmation_email, 'you can cancel this visit')
+        visit cancel_url
+        expect(page).to have_content('Your visit has been confirmed')
+        check_yes_cancel
+        click_button 'Cancel visit'
+        expect(page).to have_content('Your visit is cancelled')
+
+
+        # Give time to GA to do its indexing
+        sleep(1)
+        expect(google_analytics.pvb2_url_count(processing_path)).to be > (0)
       end
-
-      fill_in 'Reference number', with: '12345678'
-
-      within '.visitor-contact-list' do
-        all('option:not([disabled]')[1].select_option
-      end
-
-      click_button 'Process'
-
-      expect(page).to have_css('p.notification', text: 'Thank you for processing the visit')
-
-      confirmation_email = retry_for(180, ->(email) { email }) {
-        visitor_emails = Mailtrap.instance.search_messages(visitor.email)
-
-        visitor_emails.find { |email| email.subject =~ /^Visit confirmed/ }
-      }
-
-      cancel_url = email_link_href(confirmation_email, 'you can cancel this visit')
-      visit cancel_url
-      expect(page).to have_content('Your visit has been confirmed')
-      check_yes_cancel
-      click_button 'Cancel visit'
-      expect(page).to have_content('Your visit is cancelled')
-
-
-      # Give time to GA to do its indexing
-      sleep(1)
-      expect(google_analytics.pvb2_url_count(processing_path)).to be > (0)
     end
   end
 

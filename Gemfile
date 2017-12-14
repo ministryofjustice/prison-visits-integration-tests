@@ -13,4 +13,5 @@ gem 'rspec_junit_formatter'
 
 group :development do
   gem 'pry'
+  gem 'awesome_print', require: 'ap'
 end
