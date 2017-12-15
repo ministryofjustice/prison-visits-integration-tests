@@ -28,6 +28,8 @@ RSpec.feature 'process a booking', type: :feature do
 
     context 'with book to nomis disabled' do
       scenario 'then visitor cancels' do
+
+        ap prisoner
         make_booking(prisoner, visitor)
 
         login_as_staff
