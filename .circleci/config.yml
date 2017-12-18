@@ -24,6 +24,7 @@ jobs:
             wget https://github.com/mozilla/geckodriver/releases/download/v0.19.0/geckodriver-v0.19.0-linux64.tar.gz
             tar -zxvf geckodriver-v0.19.0-linux64.tar.gz
             sudo mv geckodriver /usr/local/bin/
+      - run: printenv
       - run: bin/rspec --no-color --format documentation --format RspecJunitFormatter -o screenshots/rspec.xml
       - save_cache:
           key: bundler-{{ checksum "Gemfile.lock" }}
