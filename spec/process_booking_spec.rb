@@ -36,12 +36,10 @@ RSpec.feature 'process a booking', type: :feature do
         select_prison_for_processing
         expect(page).to have_css('tr:not(.hidden-row)')
 
-
         # The most recent requested visit
         all('tr:not(.hidden-row)').last.click_link('View')
 
         processing_path = page.current_path
-
         expect(page).to have_css('.bold-small', text: [prisoner_first_name, prisoner_last_name].join(' '))
         expect(page).to have_css('.name', text: 'Peter Sellers')
 
