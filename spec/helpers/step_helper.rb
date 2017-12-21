@@ -42,7 +42,7 @@ def make_booking(prisoner, visitor)
   fill_in_prisoner_step(prisoner)
   fill_in 'Prisoner number', with: prisoner.number
   fill_in 'Prison name', with: ENV.fetch('PRISON')
-  click_button 'Continue'
+  page.execute_script('$("input[value=\"Continue\"]").trigger("click")')
 
   expect(page).to have_css('h1', text: 'When do you want to visit?')
   select_first_available_date_and_slot

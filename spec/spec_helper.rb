@@ -1,3 +1,6 @@
+require 'bundler/setup'
+Bundler.setup(:default, :development)
+require 'ap'
 require 'capybara/rspec'
 require 'capybara-screenshot/rspec'
 require 'byebug'
