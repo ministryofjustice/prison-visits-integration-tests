@@ -28,8 +28,6 @@ RSpec.feature 'process a booking', type: :feature do
 
     context 'with book to nomis disabled' do
       scenario 'then visitor cancels' do
-
-        ap prisoner
         make_booking(prisoner, visitor)
 
         login_as_staff
@@ -102,6 +100,7 @@ RSpec.feature 'process a booking', type: :feature do
         view_link.click
         choose('None of the chosen times are available')
         click_button 'Process'
+        expect(page).to have_css('h2.bold-medium', text: 'Requests')
       end
     end
   end
