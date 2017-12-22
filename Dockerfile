@@ -1,18 +1,18 @@
-FROM ruby:2.4.2
+FROM ruby:2.4.3
 
 ENV APP_HOME /app
 WORKDIR $APP_HOME
 
 # Install qt & xvfb (virtual X) for capybara-webkit
 RUN apt-get update -y; true && apt-get install -y libgtk-3-0 ibgtk3.0-cil-dev libasound2 libasound2 libdbus-glib-1-2 libdbus-1-3  xvfb
-RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.19.0/geckodriver-v0.19.0-linux64.tar.gz \
-         -O /tmp/geckodriver-v0.19.0-linux64.tar.gz && \
-         tar -xvzf /tmp/geckodriver-v0.19.0-linux64.tar.gz && \
+RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.19.1/geckodriver-v0.19.1-linux64.tar.gz \
+         -O /tmp/geckodriver-v0.19.1-linux64.tar.gz && \
+         tar -xvzf /tmp/geckodriver-v0.19.1-linux64.tar.gz && \
          mv geckodriver /usr/local/bin/ && \
-         rm -f /tmp/geckodriver-v0.19.0-linux64.tar.gz
+         rm -f /tmp/geckodriver-v0.19.1-linux64.tar.gz
 
-RUN wget -L https://ftp.mozilla.org/pub/firefox/releases/56.0/linux-x86_64/en-US/firefox-56.0.tar.bz2 -O firefox-56.0.tar.bz2 && \
-          tar xjf firefox-56.0.tar.bz2 && \
+RUN wget -L https://ftp.mozilla.org/pub/firefox/releases/57.0/linux-x86_64/en-US/firefox-57.0.tar.bz2 -O firefox-57.0.tar.bz2 && \
+          tar xjf firefox-57.0.tar.bz2 && \
           mv firefox /opt/ && \
           ln -sf /opt/firefox/firefox /usr/bin/firefox
 

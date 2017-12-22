@@ -95,5 +95,14 @@ RSpec.feature 'process a booking', type: :feature do
         expect(page).to have_css('h3.heading-medium', text: 'Cancellations')
       end
     end
+
+    scenario 'Clean All of the requested visits' do
+
+      while view_link = page.first('table tbody td[aria-label="Actions"] a')
+        view_link.click
+        choose('None of the chosen times are available')
+        click_button 'Process'
+      end
+    end
   end
 end
