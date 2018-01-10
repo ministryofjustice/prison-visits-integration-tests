@@ -4,7 +4,11 @@ require 'faker'
 
 RSpec.feature 'process a booking', type: :feature do
   let(:prisoner_first_name) { Faker::Name.first_name }
-  let(:prisoner_last_name) { Faker::Name.last_name }
+  let(:prisoner_last_name)  { Faker::Name.last_name }
+
+  let(:visitor_first_name) { ENV.fetch('LEAD_VISITOR_FIRST_NAME', 'Peter') }
+  let(:visitor_last_name)  { ENV.fetch('LEAD_VISITOR_LAST_NAME', 'Selers') }
+  let(:visitor_dob)        { ENV.fetch('LEAD_VISITOR_DOB', '1925-09-08') }
 
   let(:prisoner) do
     Prisoner.new(
@@ -17,8 +21,9 @@ RSpec.feature 'process a booking', type: :feature do
 
   let(:visitor) do
     Visitor.new(
-      'Peter', 'Sellers',
-      Date.parse('1925-09-08'),
+      visitor_first_name,
+      visitor_last_name,
+      Date.parse(visitor_dob),
       "#{SecureRandom.uuid}@email.prisonvisits.service.gov.uk",
       '079 00112233'
     )
@@ -39,7 +44,7 @@ RSpec.feature 'process a booking', type: :feature do
 
         processing_path = page.current_path
         expect(page).to have_css('.bold-small', text: [prisoner_first_name, prisoner_last_name].join(' '))
-        expect(page).to have_css('.name', text: 'Peter Sellers')
+        expect(page).to have_css('.name', text: "#{visitor_first_name} #{visitor_last_name}")
 
         # NOMIS CHECKS
         expect(page).to have_css('.notice', text: 'The prisoner date of birth, prisoner number and prison name have been verified.')
@@ -100,7 +105,7 @@ RSpec.feature 'process a booking', type: :feature do
         view_link.click
         choose('None of the chosen times are available')
         click_button 'Process'
-        expect(page).to have_css('h2.bold-medium', text: 'Requests')
+        expect(page).to have_css('h1.heading-large', text: 'Requested visits')
       end
     end
   end
