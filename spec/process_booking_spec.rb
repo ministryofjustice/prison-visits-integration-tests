@@ -64,11 +64,11 @@ RSpec.feature 'process a booking', type: :feature do
 
         expect(page).to have_css('p.notification', text: 'Thank you for processing the visit')
 
-        confirmation_email = retry_for(180, ->(email) { email }) {
+        confirmation_email = retry_for(180, ->(email) { email }) do
           visitor_emails = Mailtrap.instance.search_messages(visitor.email)
 
           visitor_emails.find { |email| email.subject =~ /^Visit confirmed/ }
-        }
+        end
 
         cancel_url = email_link_href(confirmation_email, 'you can cancel this visit')
         visit cancel_url
@@ -77,10 +77,9 @@ RSpec.feature 'process a booking', type: :feature do
         click_button 'Cancel visit'
         expect(page).to have_content('Your visit is cancelled')
 
-
         # Give time to GA to do its indexing
         sleep(1)
-        expect(google_analytics.pvb2_url_count(processing_path)).to be > (0)
+        expect(google_analytics.pvb2_url_count('/visit-requested')).to be > (0)
       end
     end
   end
