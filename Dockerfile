@@ -1,6 +1,7 @@
 FROM ruby:2.4.3
 
 ENV APP_HOME /app
+ENV FIREFOX_VERSION 57.0.4
 WORKDIR $APP_HOME
 
 # Install qt & xvfb (virtual X) for capybara-webkit
@@ -11,8 +12,8 @@ RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.19.1/geckod
          mv geckodriver /usr/local/bin/ && \
          rm -f /tmp/geckodriver-v0.19.1-linux64.tar.gz
 
-RUN wget -L https://ftp.mozilla.org/pub/firefox/releases/57.0/linux-x86_64/en-US/firefox-57.0.tar.bz2 -O firefox-57.0.tar.bz2 && \
-          tar xjf firefox-57.0.tar.bz2 && \
+RUN wget -L https://ftp.mozilla.org/pub/firefox/releases/$FIREFOX_VERSION/linux-x86_64/en-US/firefox-$FIREFOX_VERSION.tar.bz2 -O firefox-$FIREFOX_VERSION.tar.bz2 && \
+          tar xjf firefox-$FIREFOX_VERSION.tar.bz2 && \
           mv firefox /opt/ && \
           ln -sf /opt/firefox/firefox /usr/bin/firefox
 
