@@ -90,8 +90,5 @@ RSpec.feature 'booking a visit', type: :feature do
     # Give time to GA to do its indexing
     sleep(1)
     expect(google_analytics.public_url_count(status_url)).to be > (0)
-
-  else
-    expect(page).to have_button('Send visit request')
   end
 end

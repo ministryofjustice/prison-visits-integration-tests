@@ -21,7 +21,7 @@ RSpec.feature 'booking a visit', type: :feature do
   end
 
   scenario 'for a prisoner that does not exist' do
-    start_page = 'http://localhost:4000'
+    start_page = ENV.fetch('START_PAGE')
 
     visit start_page
 
