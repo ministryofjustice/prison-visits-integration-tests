@@ -1,4 +1,4 @@
-require '../spec_helper'
+require_relative '../spec_helper'
 require 'securerandom'
 
 RSpec.feature 'booking a visit', type: :feature do
