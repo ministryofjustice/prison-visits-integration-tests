@@ -1,4 +1,4 @@
-require 'spec_helper'
+require '../spec_helper'
 require 'securerandom'
 
 RSpec.feature 'booking a visit', type: :feature do
@@ -6,19 +6,19 @@ RSpec.feature 'booking a visit', type: :feature do
     # Trivia: George Best spent 7 days imprisoned in Pentonville for driving
     # under alcohol and assault [wikipedia]
     Prisoner.new(
-      'George', 'Best',
-      Date.parse(ENV['PRISONER_DOB']), # Actually 1946-05-22
-      ENV['PRISONER_NUMBER'],
-      ENV['PRISON']
+        'George', 'Best',
+        Date.parse(ENV['PRISONER_DOB']), # Actually 1946-05-22
+        ENV['PRISONER_NUMBER'],
+        ENV['PRISON']
     )
   end
 
   let(:visitor) do
     Visitor.new(
-      'Peter', 'Sellers',
-      Date.parse('1925-09-08'),
-      "#{SecureRandom.uuid}@email.prisonvisits.service.gov.uk",
-      '079 00112233'
+        'Peter', 'Sellers',
+        Date.parse('1925-09-08'),
+        "#{SecureRandom.uuid}@email.prisonvisits.service.gov.uk",
+        '079 00112233'
     )
   end
 
@@ -34,9 +34,9 @@ RSpec.feature 'booking a visit', type: :feature do
     fill_in 'Prisoner number', with: 'Z0000AA'
     click_button 'Continue'
     expect(page).to have_css(
-                      'fieldset span.error-message',
-                      text: 'No prisoner matches the details you’ve supplied, please ask the prisoner to check your details are correct',
-                      visible: false)
+                        'fieldset span.error-message',
+                        text: 'No prisoner matches the details you’ve supplied, please ask the prisoner to check your details are correct',
+                        visible: false)
 
     # Booking: Step 1 (prisoner)
     fill_in 'Prisoner number', with: prisoner.number
@@ -55,45 +55,43 @@ RSpec.feature 'booking a visit', type: :feature do
     # Booking: Step 4 (summary)
     expect(page).to have_content 'Check your visit details'
 
-    if ENV['INTEGRATION_TEST']
-      click_button 'Send visit request'
+    click_button 'Send visit request'
 
-      # Redirect to visit show page
-      expect(page).to have_content 'Visit request sent'
-      expect(page).to have_content prisoner.prison
+    # Redirect to visit show page
+    expect(page).to have_content 'Visit request sent'
+    expect(page).to have_content prisoner.prison
 
-      # Fetch 'booking requested' email sent to prisoner
-      # Tends to take ~ 2s locally for emails to be delivered and available via
-      # API, so being generous to avoid false positives
-      emails = retry_for(100, ->(mailbox) { mailbox.any? }) do
-        Mailtrap.instance.search_messages(visitor.email)
-      end
-      # Since the email is unique only a single email should have been returned
-      expect(emails.size).to eq(1)
-      email = emails.first
-      status_url = email.capybara.find_link('visit status page')[:href]
-
-      # Status page
-      visit status_url
-      expect(page).to have_content 'Your visit is not booked yet'
-      within('#cancel-visit-section') do
-        find('.summary').click
-      end
-
-      check_yes_cancel
-      click_button 'Cancel visit'
-      expect(page).to have_content 'You cancelled this visit request'
-
-      # Visit status page again and expect cancellation text
-      visit status_url
-      expect(page).to have_content 'You cancelled this visit request'
-
-      # Give time to GA to do its indexing
-      sleep(1)
-      expect(google_analytics.public_url_count(status_url)).to be > (0)
-
-    else
-      expect(page).to have_button('Send visit request')
+    # Fetch 'booking requested' email sent to prisoner
+    # Tends to take ~ 2s locally for emails to be delivered and available via
+    # API, so being generous to avoid false positives
+    emails = retry_for(100, ->(mailbox) {mailbox.any?}) do
+      Mailtrap.instance.search_messages(visitor.email)
     end
+    # Since the email is unique only a single email should have been returned
+    expect(emails.size).to eq(1)
+    email = emails.first
+    status_url = email.capybara.find_link('visit status page')[:href]
+
+    # Status page
+    visit status_url
+    expect(page).to have_content 'Your visit is not booked yet'
+    within('#cancel-visit-section') do
+      find('.summary').click
+    end
+
+    check_yes_cancel
+    click_button 'Cancel visit'
+    expect(page).to have_content 'You cancelled this visit request'
+
+    # Visit status page again and expect cancellation text
+    visit status_url
+    expect(page).to have_content 'You cancelled this visit request'
+
+    # Give time to GA to do its indexing
+    sleep(1)
+    expect(google_analytics.public_url_count(status_url)).to be > (0)
+
+  else
+    expect(page).to have_button('Send visit request')
   end
 end
