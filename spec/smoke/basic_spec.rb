@@ -1,18 +1,22 @@
 require_relative '../spec_helper'
-require 'pry'
 require 'securerandom'
+require 'faker'
 
 RSpec.feature 'booking a visit', type: :feature do
-
   INVALID_PRISONER_NUMBER = 'Z0000AA'.freeze
+  PRISON = 'Leeds'.freeze
+
+  let(:first_name) { Faker::Name.first_name }
+  let(:last_name)  { Faker::Name.last_name }
+  let(:date_of_birth) { Faker::Date.birthday }
 
   let(:invalid_prisoner) do
     Prisoner.new(
-        'Bobby',
-        'Brown',
-        Date.parse('1980-04-03'),
+        first_name,
+        last_name,
+        date_of_birth,
         INVALID_PRISONER_NUMBER,
-        'Leeds'
+        PRISON
     )
   end
 
@@ -25,6 +29,7 @@ RSpec.feature 'booking a visit', type: :feature do
 
     fill_in_prisoner_step(invalid_prisoner)
     fill_in 'Prisoner number', with: INVALID_PRISONER_NUMBER
+
     click_button 'Continue'
 
     expect(page).to have_css(
