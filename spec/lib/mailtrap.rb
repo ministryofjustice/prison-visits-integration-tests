@@ -22,21 +22,22 @@ class Mailtrap
   end
 
   def initialize(api_token:)
-    @connection = Excon.new('https://mailtrap.io/', {
+    @connection = Excon.new(
+      'https://mailtrap.io/',
       persistent: true,
       headers: {
         'Api-Token' => api_token
-      },
-    })
+      }
+    )
   end
 
   def inbox_messages(query = {})
-    response = @connection.get({
+    response = @connection.get(
       path: '/api/v1/inboxes/106414/messages',
       query: query,
       expects: [200],
       idempotent: true
-                               })
+    )
     messages = JSON.parse(response.body)
     messages.map { |e| Email.parse(e) }
   end
