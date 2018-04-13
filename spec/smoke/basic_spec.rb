@@ -3,20 +3,20 @@ require 'securerandom'
 require 'faker'
 
 RSpec.feature 'booking a visit', type: :feature do
-  INVALID_PRISONER_NUMBER = 'Z0000AA'.freeze
-  PRISON = 'Leeds'.freeze
+  INVALID_PRISONER_NUMBER = 'Z0000AA'
+  PRISON = 'Leeds'
 
   let(:first_name) { Faker::Name.first_name }
-  let(:last_name)  { Faker::Name.last_name }
+  let(:last_name) { Faker::Name.last_name }
   let(:date_of_birth) { Faker::Date.birthday }
 
   let(:invalid_prisoner) do
     Prisoner.new(
-        first_name,
-        last_name,
-        date_of_birth,
-        INVALID_PRISONER_NUMBER,
-        PRISON
+      first_name,
+      last_name,
+      date_of_birth,
+      INVALID_PRISONER_NUMBER,
+      PRISON
     )
   end
 
@@ -33,8 +33,9 @@ RSpec.feature 'booking a visit', type: :feature do
     click_button 'Continue'
 
     expect(page).to have_css(
-                        'fieldset span.error-message',
-                        text: 'No prisoner matches the details you’ve supplied, please ask the prisoner to check your details are correct',
-                        visible: false)
+      'fieldset span.error-message',
+      text: 'No prisoner matches the details you’ve supplied, please ask the prisoner to check your details are correct',
+      visible: false
+    )
   end
 end

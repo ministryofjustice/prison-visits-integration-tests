@@ -21,7 +21,8 @@ def check_firefox_version
   driver = session.driver
   version = driver.browser.capabilities.version
   version_minor = version.split('.').take(2).join('.').to_f
-  raise "Firefox is the incorrect version! Current: #{version_minor}. Expected: 57.0.X" if version_minor > 57.0
+  err = "Firefox is the incorrect version! Current: #{version_minor}. Expected: 57.0.X"
+  raise err if version_minor > 57.0
 end
 
 require_relative 'helpers/google_analytics_helper'

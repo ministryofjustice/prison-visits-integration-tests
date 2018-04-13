@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 require_relative '../spec_helper'
 require 'securerandom'
 require 'faker'
 
 RSpec.feature 'process a booking', type: :feature do
   let(:prisoner_first_name) { Faker::Name.first_name }
-  let(:prisoner_last_name)  { Faker::Name.last_name }
+  let(:prisoner_last_name) { Faker::Name.last_name }
 
   let(:visitor_first_name) { ENV.fetch('LEAD_VISITOR_FIRST_NAME', 'Peter') }
   let(:visitor_last_name)  { ENV.fetch('LEAD_VISITOR_LAST_NAME', 'Selers') }
@@ -30,7 +32,6 @@ RSpec.feature 'process a booking', type: :feature do
   end
 
   describe 'accept booking' do
-
     context 'with book to nomis disabled' do
       scenario 'then visitor cancels' do
         make_booking(prisoner, visitor)
@@ -78,7 +79,7 @@ RSpec.feature 'process a booking', type: :feature do
 
         # Give time to GA to do its indexing
         sleep(1)
-        expect(google_analytics.pvb2_url_count('/visit-requested')).to be > (0)
+        expect(google_analytics.pvb2_url_count('/visit-requested')).to be > 0
       end
     end
   end
@@ -90,7 +91,6 @@ RSpec.feature 'process a booking', type: :feature do
     end
 
     scenario 'Clean All of the Cancelled visits' do
-
       while submit_button = page.first('table tbody td form input:not([disabled])[type="submit"]')
         submit_button.click
         expect(page).to have_css('h3.heading-medium', text: 'Cancellations')
@@ -98,7 +98,6 @@ RSpec.feature 'process a booking', type: :feature do
     end
 
     scenario 'Clean All of the requested visits' do
-
       while view_link = page.first('table tbody td[aria-label="Actions"] a')
         view_link.click
         choose('None of the chosen times are available')

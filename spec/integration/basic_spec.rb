@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../spec_helper'
 require 'securerandom'
 
@@ -6,19 +8,19 @@ RSpec.feature 'booking a visit', type: :feature do
     # Trivia: George Best spent 7 days imprisoned in Pentonville for driving
     # under alcohol and assault [wikipedia]
     Prisoner.new(
-        'George', 'Best',
-        Date.parse(ENV['PRISONER_DOB']), # Actually 1946-05-22
-        ENV['PRISONER_NUMBER'],
-        ENV['PRISON']
+      'George', 'Best',
+      Date.parse(ENV['PRISONER_DOB']), # Actually 1946-05-22
+      ENV['PRISONER_NUMBER'],
+      ENV['PRISON']
     )
   end
 
   let(:visitor) do
     Visitor.new(
-        'Peter', 'Sellers',
-        Date.parse('1925-09-08'),
-        "#{SecureRandom.uuid}@email.prisonvisits.service.gov.uk",
-        '079 00112233'
+      'Peter', 'Sellers',
+      Date.parse('1925-09-08'),
+      "#{SecureRandom.uuid}@email.prisonvisits.service.gov.uk",
+      '079 00112233'
     )
   end
 
@@ -34,9 +36,10 @@ RSpec.feature 'booking a visit', type: :feature do
     fill_in 'Prisoner number', with: 'Z0000AA'
     click_button 'Continue'
     expect(page).to have_css(
-                        'fieldset span.error-message',
-                        text: 'No prisoner matches the details you’ve supplied, please ask the prisoner to check your details are correct',
-                        visible: false)
+      'fieldset span.error-message',
+      text: 'No prisoner matches the details you’ve supplied, please ask the prisoner to check your details are correct',
+      visible: false
+    )
 
     # Booking: Step 1 (prisoner)
     fill_in 'Prisoner number', with: prisoner.number
@@ -64,7 +67,7 @@ RSpec.feature 'booking a visit', type: :feature do
     # Fetch 'booking requested' email sent to prisoner
     # Tends to take ~ 2s locally for emails to be delivered and available via
     # API, so being generous to avoid false positives
-    emails = retry_for(100, ->(mailbox) {mailbox.any?}) do
+    emails = retry_for(100, ->(mailbox) { mailbox.any? }) do
       Mailtrap.instance.search_messages(visitor.email)
     end
     # Since the email is unique only a single email should have been returned
@@ -89,6 +92,6 @@ RSpec.feature 'booking a visit', type: :feature do
 
     # Give time to GA to do its indexing
     sleep(1)
-    expect(google_analytics.public_url_count(status_url)).to be > (0)
+    expect(google_analytics.public_url_count(status_url)).to be > 0
   end
 end

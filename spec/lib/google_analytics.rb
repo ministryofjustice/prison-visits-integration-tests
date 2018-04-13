@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'singleton'
 require 'google/apis/analytics_v3'
 
@@ -39,15 +41,16 @@ class GoogleAnalytics
   def fetch_view_counts(view_id)
     analytics.get_realtime_data(
       view_id,
-      "rt:pageviews",
-      dimensions: "rt:pagePath")
+      'rt:pageviews',
+      dimensions: 'rt:pagePath'
+    )
   end
 
   def analytics
     @analytics ||=
       begin
         # This is needed because CircleCI escapes new lines
-        ENV['GOOGLE_PRIVATE_KEY'] = ENV['GOOGLE_PRIVATE_KEY'].gsub("\\n", "\n")
+        ENV['GOOGLE_PRIVATE_KEY'] = ENV['GOOGLE_PRIVATE_KEY'].gsub('\\n', "\n")
 
         Google::Apis::AnalyticsV3::AnalyticsService.new.tap do |obj|
           obj.authorization = google_auth
@@ -57,8 +60,9 @@ class GoogleAnalytics
 
   def google_auth
     credentials = Google::Auth::ServiceAccountCredentials.make_creds(
-      scope: 'https://www.googleapis.com/auth/analytics.readonly')
+      scope: 'https://www.googleapis.com/auth/analytics.readonly'
+    )
 
-    credentials.fetch_access_token!({})["access_token"]
+    credentials.fetch_access_token!({})['access_token']
   end
 end
