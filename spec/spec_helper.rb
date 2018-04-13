@@ -20,8 +20,14 @@ def check_firefox_version
   driver = session.driver
   version = driver.browser.capabilities.version
   version_minor = version.split('.').take(2).join('.').to_f
-  err = "Firefox is the incorrect version! Current: #{version_minor}. Expected: 57.0.X"
-  raise err if version_minor > 57.0
+  puts firefox_warning(version_minor) if version_minor > 57.0
+end
+
+def firefox_warning(version)
+  <<-HEREDOC
+    Warning! Capybara is testing against Firefox version: #{version}.
+    Capybara may experience problems clicking buttons for any version greater than 57.0.X
+  HEREDOC
 end
 
 require_relative 'helpers/google_analytics_helper'
