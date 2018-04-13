@@ -1,16 +1,17 @@
 source 'https://rubygems.org'
-ruby '2.5.1'
+ruby '2.4.3'
 
 gem 'capybara'
 gem 'capybara-screenshot'
+gem 'selenium-webdriver'
 gem 'excon'
 gem 'faker'
-gem 'google-api-client'
 gem 'rspec'
+gem 'google-api-client'
 gem 'rspec_junit_formatter'
-gem 'selenium-webdriver'
 
 group :development do
-  gem 'awesome_print', require: 'ap'
   gem 'byebug'
+  gem 'pry'
+  gem 'awesome_print', require: 'ap'
 end

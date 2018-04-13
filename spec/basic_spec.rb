@@ -31,13 +31,11 @@ RSpec.feature 'booking a visit', type: :feature do
 
     fill_in_prisoner_step(prisoner)
 
-    fill_in 'Prisoner number', with: 'Z0000AA'
-    click_button 'Continue'
-    expect(page).to have_css(
-      'fieldset span.error-message',
-      text: 'No prisoner matches the details you’ve supplied, please ask the prisoner to check your details are correct',
-      visible: false
-    )
+    if ENV['PUBLIC_PRISONER_CHECK'] == 'true'
+      fill_in 'Prisoner number', with: 'Z0000AA'
+      click_button 'Continue'
+      expect(page).to have_css('fieldset span.error-message', text: 'No prisoner matches the details you’ve supplied, please ask the prisoner to check your details are correct')
+    end
 
     # Booking: Step 1 (prisoner)
     fill_in 'Prisoner number', with: prisoner.number
@@ -55,7 +53,6 @@ RSpec.feature 'booking a visit', type: :feature do
 
     # Booking: Step 4 (summary)
     expect(page).to have_content 'Check your visit details'
-
     click_button 'Send visit request'
 
     # Redirect to visit show page
@@ -90,6 +87,6 @@ RSpec.feature 'booking a visit', type: :feature do
 
     # Give time to GA to do its indexing
     sleep(1)
-    expect(google_analytics.public_url_count(status_url)).to be > 0
+    expect(google_analytics.public_url_count(status_url)).to be > (0)
   end
 end
