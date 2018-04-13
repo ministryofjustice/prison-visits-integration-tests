@@ -1,4 +1,4 @@
-FROM ruby:2.4.3
+FROM ruby:2.5.1
 
 ENV APP_HOME /app
 ENV FIREFOX_VERSION 57.0.4
