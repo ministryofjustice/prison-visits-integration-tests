@@ -2,7 +2,6 @@ require 'bundler/setup'
 Bundler.setup(:default, :development)
 require 'capybara/rspec'
 require 'capybara-screenshot/rspec'
-require 'pry'
 
 Capybara.default_driver = :selenium
 Capybara.save_path = File.expand_path('../screenshots', __dir__)

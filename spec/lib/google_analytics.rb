@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'singleton'
 require 'google/apis/analytics_v3'
 

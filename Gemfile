@@ -13,5 +13,4 @@ gem 'selenium-webdriver'
 group :development do
   gem 'awesome_print', require: 'ap'
   gem 'byebug'
-  gem 'pry'
 end
