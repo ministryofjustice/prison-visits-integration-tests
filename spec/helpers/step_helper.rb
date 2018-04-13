@@ -13,6 +13,7 @@ def login_as_staff
 
   return if page.all('form input[type="submit"][value="Sign out"]').any?
 
+
   expect(page).to have_css('a.header__menu__proposition-name',
                            text: 'Ministry of Justice Sign On')
 
@@ -24,7 +25,7 @@ end
 def select_prison_for_processing
   expect(page).to have_css('#estate_ids_chosen li.search-field')
   first('#estate_ids_chosen li.search-field input.chosen-search-input').click
-  prison_li = all('.chosen-drop ul.chosen-results li').detect do |li|
+  prison_li = all('.chosen-drop ul.chosen-results li').detect do|li|
     li.text == ENV.fetch('PRISON') do
       raise ArgumentError.new('Please provide a PRISON environment variable')
     end
@@ -96,7 +97,7 @@ def email_link_href(email, link_text)
 end
 
 def select_first_available_date_and_slot
-  first('table.booking-calendar td.available a').click
+  first("table.booking-calendar td.available a").click
   first('#js-slotAvailability label').click
 end
 
