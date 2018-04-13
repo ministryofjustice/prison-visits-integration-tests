@@ -1,13 +1,27 @@
+# Integration & Smoke Tests for the Prison Visits Booking Service
+
+Integration and smoke tests are run by Jenkins.
+ 
+*Integration tests* ...
+- run every 30 minutes and when application branches are merged to master
+- *staging* environment only
+
+*Smoke tests* ...
+- run every 30 minutes and when application branches are merged to master
+- *production* environment only
+ 
+Both test suites are run against the Firefox browser.
+
+
 ## Setup instructions
 
-We run our integration test within Firefox for more reliability.
-
-Run the tests
+### Running tests
 
     bundle install
-    bundle exec rspec spec
+    bundle exec rspec spec/integration   # Integration tests only
+    bundle exec rspec spec/smoke         # Smoke tests only
 
-### Running locally
+### Running tests locally
 
 These tests run fine locally. The only change to the default development configuration is to redirect email to mailtrap.
 
@@ -17,6 +31,8 @@ When configuring SMTP (get the credentials by logging into mailtrap), note that 
 2. Start PVB2 (app & sidekiq)
 3. Start PVB Public (app)
 4. Run tests
+
+*NOTE* - It is recommended you run using Firefox browser <= 57.0.4 as more recent versions can cause issues with Capybara and clicking button elements.
 
 ## Test Configuration
 
