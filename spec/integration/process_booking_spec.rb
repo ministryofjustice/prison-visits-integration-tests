@@ -46,8 +46,8 @@ RSpec.feature 'process a booking', type: :feature do
 
         # NOMIS CHECKS
         expect(page).to have_css('.notice', text: 'The prisoner date of birth, prisoner number and prison name have been verified.')
-        expect(page).to have_css('.column-one-quarter', text: "Prisoner D.O.B #{prisoner.dob.strftime('%d/%m/%Y')} NOMIS verified")
-        expect(page).to have_css('.column-one-quarter', text: "Prisoner no. #{prisoner.number} NOMIS verified")
+        expect(page).to have_css('.column-one-quarter', text: "Prisoner D.O.B\n#{prisoner.dob.strftime('%d/%m/%Y')}\nNOMIS verified")
+        expect(page).to have_css('.column-one-quarter', text: "Prisoner no.\n#{prisoner.number}\nNOMIS verified")
 
         within '.choose-date' do
           first('label.date-box__label').click
@@ -89,14 +89,14 @@ RSpec.feature 'process a booking', type: :feature do
     end
 
     scenario 'Clean All of the Cancelled visits' do
-      while submit_button = page.first('table tbody td form input:not([disabled])[type="submit"]')
+      while submit_button = page.all('table tbody td form input:not([disabled])[type="submit"]').first
         submit_button.click
         expect(page).to have_css('h3.heading-medium', text: 'Cancellations')
       end
     end
 
     scenario 'Clean All of the requested visits' do
-      while view_link = page.first('table tbody td[aria-label="Actions"] a')
+      while view_link = page.all('table tbody td[aria-label="Actions"] a').first
         view_link.click
         choose('None of the chosen times are available')
         click_button 'Process'
