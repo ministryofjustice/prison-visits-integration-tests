@@ -1,7 +1,7 @@
 FROM ruby:2.5.1
 
 ENV APP_HOME /app
-ENV FIREFOX_VERSION 57.0.4
+ENV FIREFOX_VERSION 6.0
 WORKDIR $APP_HOME
 
 # Install qt & xvfb (virtual X) for capybara-webkit
