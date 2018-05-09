@@ -11,7 +11,7 @@ RSpec.configure do |config|
   config.disable_monkey_patching!
   config.before(:all) do
     check_firefox_version
-    page.driver.browser.manage.window.maximize
+    page.driver.browser.manage.window.resize_to(1920, 1080)
   end
 end
 
