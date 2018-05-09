@@ -60,7 +60,7 @@ GEM
     mini_portile2 (2.3.0)
     multi_json (1.13.1)
     multipart-post (2.0.0)
-    nokogiri (1.8.2)
+    nokogiri (1.8.1)
       mini_portile2 (~> 2.3.0)
     os (0.9.6)
     public_suffix (3.0.2)

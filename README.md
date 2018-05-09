@@ -1,6 +1,4 @@
-# Integration & Smoke Tests 
-# for the 
-# Prison Visits Booking Service
+# Integration & Smoke Tests for the Prison Visits Booking Service
 
 Integration and smoke tests are run by Jenkins.
  
@@ -34,7 +32,7 @@ When configuring SMTP (get the credentials by logging into mailtrap), note that 
 3. Start PVB Public (app)
 4. Run tests
 
-*NOTE* - It is recommended you run using Firefox browser <= 57.0.4 as more recent versions can cause issues with Capybara and clicking button elements.
+*NOTE* - It is recommended you run using [Firefox browser <= 57.0.4](https://download-installer.cdn.mozilla.net/pub/firefox/releases/57.0.4/mac/en-US/Firefox%2057.0.4.dmg) as more recent versions can cause issues with Capybara and clicking button elements.
 
 ## Test Configuration
 
