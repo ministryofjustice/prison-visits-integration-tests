@@ -34,8 +34,6 @@ When configuring SMTP (get the credentials by logging into mailtrap), note that 
 3. Start PVB Public (app)
 4. Run tests
 
-*NOTE* - It is recommended you run using Firefox browser <= 57.0.4 as more recent versions can cause issues with Capybara and clicking button elements.
-
 ## Test Configuration
 
 I recommend copying `.env.example` to `.env` and using direnv to automatically load these configuration variables (`brew install direnv`).
