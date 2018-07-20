@@ -30,8 +30,7 @@ RSpec.feature 'process a booking', type: :feature do
   end
 
   describe 'accept booking' do
-    context 'with book to nomis disabled' do
-      scenario 'then visitor cancels' do
+    scenario 'then visitor cancels' do
         make_booking(prisoner, visitor)
 
         login_as_staff
@@ -79,7 +78,6 @@ RSpec.feature 'process a booking', type: :feature do
         sleep(1)
         expect(google_analytics.pvb2_url_count('/visit-requested')).to be > 0
       end
-    end
   end
 
   describe 'clean up inboxes' do
