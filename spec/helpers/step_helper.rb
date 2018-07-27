@@ -67,13 +67,14 @@ def select_prison(name)
 end
 
 def fill_in_visitor_step(visitor)
-  fill_in 'First name',    with: visitor.first_name
-  fill_in 'Last name',     with: visitor.last_name
-  fill_in 'Day',           with: visitor.dob.day.to_s
-  fill_in 'Month',         with: visitor.dob.month.to_s
-  fill_in 'Year',          with: visitor.dob.year.to_s
-  fill_in 'Email address', with: visitor.email
-  fill_in 'Phone number',  with: visitor.phone
+  fill_in 'First name',             with: visitor.first_name
+  fill_in 'Last name',              with: visitor.last_name
+  fill_in 'Day',                    with: visitor.dob.day.to_s
+  fill_in 'Month',                  with: visitor.dob.month.to_s
+  fill_in 'Year',                   with: visitor.dob.year.to_s
+  fill_in 'Email address',          with: visitor.email
+  fill_in 'Confirm email address',  with: visitor.email
+  fill_in 'Phone number',           with: visitor.phone
 end
 
 def fill_in_slots_step
