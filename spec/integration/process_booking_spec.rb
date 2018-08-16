@@ -70,6 +70,7 @@ RSpec.feature 'process a booking', type: :feature do
         cancel_url = email_link_href(confirmation_email, 'you can cancel this visit')
         visit cancel_url
         expect(page).to have_content('Your visit has been confirmed')
+        find('summary').click
         check_yes_cancel
         click_button 'Cancel visit'
         expect(page).to have_content('Your visit is cancelled')
