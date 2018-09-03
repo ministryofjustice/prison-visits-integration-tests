@@ -11,9 +11,9 @@ class Mailtrap
     end
   end
 
-  Email = Struct.new(:to_name, :to_email, :subject, :text_body, :html_body) do
+  Email = Struct.new(:to_name, :to_email, :subject, :txt_path, :html_path) do
     def self.parse(hash)
-      new(*hash.values_at('to_name', 'to_email', 'subject', 'text_body', 'html_body'))
+      new(*hash.values_at('to_name', 'to_email', 'subject', 'txt_path', 'html_path'))
     end
 
     def capybara
@@ -42,16 +42,19 @@ class Mailtrap
     messages.map { |e| Email.parse(e) }
   end
 
+  def message_body(path)
+    response = @connection.get(
+      path: path,
+      expects: [200],
+      idempotent: true
+    )
+    Capybara.string(response.body)
+  end
+
   # The search API is rather limited: AFAICT it's something like a prefix match
   # on to, from, subject
   def search_messages(search)
     inbox_messages(search: search)
-  end
-
-  # This is not supported by the API, so this is inefficient!
-  def search_body(search_regexp)
-    emails = inbox_messages
-    emails.find_all { |e| e.text_body =~ search_regexp }
   end
 end
 

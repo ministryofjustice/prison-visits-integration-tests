@@ -71,7 +71,10 @@ RSpec.feature 'booking a visit', type: :feature do
     # Since the email is unique only a single email should have been returned
     expect(emails.size).to eq(1)
     email = emails.first
-    status_url = email.capybara.find_link('visit status page')[:href]
+    email_body = Mailtrap.instance.message_body(email.html_path)
+
+    status_url = email_body.find_link('visit status page')[:href]
+
 
     # Status page
     visit status_url
