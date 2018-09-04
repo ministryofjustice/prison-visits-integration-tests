@@ -67,9 +67,7 @@ RSpec.feature 'process a booking', type: :feature do
           visitor_emails.find { |email| email.subject =~ /^Visit confirmed/ }
         end
 
-        email_body = Mailtrap.instance.message_body(confirmation_email.html_path)
-
-        cancel_url = email_body.find_link('you can cancel this visit')[:href]
+        cancel_url = email_link_href(confirmation_email, 'you can cancel this visit')
 
         visit cancel_url
         expect(page).to have_content('Your visit has been confirmed')
