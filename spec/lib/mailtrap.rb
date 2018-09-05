@@ -11,16 +11,6 @@ class Mailtrap
     end
   end
 
-  Email = Struct.new(:to_name, :to_email, :subject, :txt_path, :html_path) do
-    def self.parse(hash)
-      new(*hash.values_at('to_name', 'to_email', 'subject', 'txt_path', 'html_path'))
-    end
-
-    def capybara
-      Capybara.string(html_body)
-    end
-  end
-
   def initialize(api_token:)
     @connection = Excon.new(
       'https://mailtrap.io/',
@@ -38,17 +28,22 @@ class Mailtrap
       expects: [200],
       idempotent: true
     )
-    messages = JSON.parse(response.body)
-    messages.map { |e| Email.parse(e) }
+    messages = JSON.parse(response.body, symbolize_names: true)
+    messages.map { |e| MailtrapEmail.new(e.slice(:to_name,
+                                                 :to_email,
+                                                 :subject,
+                                                 :txt_path,
+                                                 :html_path))
+    }
   end
 
-  def message_body(path)
+  def message_body(html_path)
     response = @connection.get(
-      path: path,
+      path: html_path,
       expects: [200],
       idempotent: true
     )
-    Capybara.string(response.body)
+    response.body
   end
 
   # The search API is rather limited: AFAICT it's something like a prefix match
