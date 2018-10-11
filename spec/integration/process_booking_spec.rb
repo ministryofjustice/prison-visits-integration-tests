@@ -54,7 +54,7 @@ RSpec.feature 'process a booking', type: :feature do
         fill_in 'Reference number', with: '12345678'
 
         within '.visitor-contact-list' do
-          all('option:not([disabled]')[1].select_option
+          all('option:not([disabled])')[1].select_option
         end
 
         click_button 'Process'
@@ -98,7 +98,7 @@ RSpec.feature 'process a booking', type: :feature do
     scenario 'Clean All of the requested visits' do
       while view_link = page.all('table tbody td[aria-label="Actions"] a').first
         view_link.click
-        choose('None of the chosen times are available')
+        choose('None of the chosen times are available', visible: false)
         click_button 'Process'
         expect(page).to have_css('h1.heading-large', text: 'Requested visits')
       end
