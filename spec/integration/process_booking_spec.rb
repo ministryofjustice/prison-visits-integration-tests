@@ -77,8 +77,12 @@ RSpec.feature 'process a booking', type: :feature do
         expect(page).to have_content('Your visit is cancelled')
 
         # Give time to GA to do its indexing
-        sleep(1)
-        expect(google_analytics.pvb2_url_count('/visit-requested')).to be > 0
+        # Only do this in template deploy environment. New Google Private Key required for kubernetes
+
+        if ENV['TEMPLATE_DEPLOY']
+          sleep(1)
+          expect(google_analytics.pvb2_url_count('/visit-requested')).to be > 0
+        end
       end
   end
 
