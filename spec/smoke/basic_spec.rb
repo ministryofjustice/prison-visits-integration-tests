@@ -30,7 +30,7 @@ RSpec.feature 'booking a visit', type: :feature do
     fill_in_prisoner_step(invalid_prisoner)
     fill_in 'Prisoner number', with: INVALID_PRISONER_NUMBER
 
-    click_button 'Continue'
+    click_continue
 
     expect(page).to have_css(
       'fieldset span.error-message',

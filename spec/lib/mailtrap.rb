@@ -21,6 +21,25 @@ class Mailtrap
     )
   end
 
+  def clean
+    @connection.patch(
+      path: '/api/v1/inboxes/106414/clean',
+      expects: [200],
+      idempotent: true
+    )
+  end
+
+  def clean_if_full
+    response = @connection.get(
+      path: '/api/v1/inboxes',
+      expects: [200],
+      idempotent: true
+    )
+    inbox = JSON.parse(response.body, symbolize_names: true).first
+    # 'full' means enough space to receive all the emails from this test
+    clean if inbox.fetch(:max_size) - inbox.fetch(:emails_count) < 5
+  end
+
   def inbox_messages(query = {})
     response = @connection.get(
       path: '/api/v1/inboxes/106414/messages',

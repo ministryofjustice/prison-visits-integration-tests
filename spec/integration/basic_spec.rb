@@ -32,7 +32,7 @@ RSpec.feature 'booking a visit', type: :feature do
     fill_in_prisoner_step(prisoner)
 
     fill_in 'Prisoner number', with: 'Z0000AA'
-    click_button 'Continue'
+    click_continue
     expect(page).to have_css(
       'fieldset span.error-message',
       text: 'No prisoner matches the details you’ve supplied, please ask the prisoner to check your details are correct',
@@ -41,7 +41,7 @@ RSpec.feature 'booking a visit', type: :feature do
 
     # Booking: Step 1 (prisoner)
     fill_in 'Prisoner number', with: prisoner.number
-    click_button 'Continue'
+    click_continue
 
     # Booking: Step 2 (pick 1 slot)
     expect(page).to have_css 'h1', text: 'When do you want to visit?'
@@ -51,7 +51,7 @@ RSpec.feature 'booking a visit', type: :feature do
     # Booking: Step 3 (visitors)
     expect(page).to have_content 'Visitor details'
     fill_in_visitor_step(visitor)
-    click_button 'Continue'
+    click_continue
 
     # Booking: Step 4 (summary)
     expect(page).to have_content 'Check your visit details'

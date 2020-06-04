@@ -41,15 +41,23 @@ def make_booking(prisoner, visitor)
   fill_in_prisoner_step(prisoner)
   fill_in 'Prisoner number', with: prisoner.number
   fill_in 'Prison name', with: ENV.fetch('PRISON')
-  page.execute_script('$("input[value=\"Continue\"]").trigger("click")')
+  click_continue
 
   expect(page).to have_css('h1', text: 'When do you want to visit?')
   select_first_available_date_and_slot
   click_link 'No more to add'
   fill_in_visitor_step(visitor)
-  click_button 'Continue'
+  click_continue
   click_button 'Send visit request'
   expect(page).to have_content 'Visit request sent'
+end
+
+# for reasons not completely understood, sometimes capybara can't find
+# the continue button to click on because it is just off-screen
+# so do it programmatically instead.
+def click_continue
+  page.execute_script('$("input[value=\"Continue\"]").trigger("click")')
+  # click_button 'Continue'
 end
 
 def fill_in_prisoner_step(prisoner)
