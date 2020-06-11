@@ -1,33 +1,56 @@
-FROM ruby:2.6.3
+FROM ruby:2.6.3-stretch
 
-ENV APP_HOME /app
-WORKDIR $APP_HOME
+RUN \
+  set -ex \
+  && apt-get update \
+  && DEBIAN_FRONTEND=noninteractive apt-get install \
+    -y \
+    --no-install-recommends \
+    locales \
+  && sed -i -e 's/# en_GB.UTF-8 UTF-8/en_GB.UTF-8 UTF-8/' /etc/locale.gen \
+  && dpkg-reconfigure --frontend=noninteractive locales \
+  && update-locale LANG=en_GB.UTF-8
 
-# Install qt & xvfb (virtual X) for capybara-webkit
-RUN apt-get update -y; true && apt-get install -y libgtk-3-0 ibgtk3.0-cil-dev libasound2 libasound2 libdbus-glib-1-2 libdbus-1-3  xvfb
-RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.19.1/geckodriver-v0.19.1-linux64.tar.gz \
-         -O /tmp/geckodriver-v0.19.1-linux64.tar.gz && \
-         tar -xvzf /tmp/geckodriver-v0.19.1-linux64.tar.gz && \
-         mv geckodriver /usr/local/bin/ && \
-         rm -f /tmp/geckodriver-v0.19.1-linux64.tar.gz
+ENV \
+  LANG=en_GB.UTF-8 \
+  LANGUAGE=en_GB.UTF-8 \
+  LC_ALL=en_GB.UTF-8
 
-ENV FIREFOX_VERSION 59.0.3
-RUN wget -L https://ftp.mozilla.org/pub/firefox/releases/$FIREFOX_VERSION/linux-x86_64/en-US/firefox-$FIREFOX_VERSION.tar.bz2 -O firefox-$FIREFOX_VERSION.tar.bz2 && \
-          tar xjf firefox-$FIREFOX_VERSION.tar.bz2 && \
-          mv firefox /opt/ && \
-          ln -sf /opt/firefox/firefox /usr/bin/firefox
+ARG VERSION_NUMBER
+ARG COMMIT_ID
+ARG BUILD_DATE
+ARG BUILD_TAG
 
-# Bundle before copying the app so that we make use of the Docker cache
-ENV BUNDLE_GEMFILE=$APP_HOME/Gemfile \
-  BUNDLE_JOBS=2 \
-  BUNDLE_PATH=/bundle
+ENV APPVERSION=${VERSION_NUMBER}
+ENV APP_GIT_COMMIT=${COMMIT_ID}
+ENV APP_BUILD_DATE=${BUILD_DATE}
+ENV APP_BUILD_TAG=${BUILD_TAG}
+
+WORKDIR /app
+
+RUN \
+  set -ex \
+  && apt-get install \
+    -y \
+    --no-install-recommends \
+    apt-transport-https \
+    build-essential \
+    libpq-dev \
+    chromium \
+    firefox-esr \
+    netcat \
+    nodejs \
+  && timedatectl set-timezone Europe/London || true \
+  && gem update bundler --no-document
 
 COPY Gemfile Gemfile.lock ./
-RUN bundle install --without development
 
-COPY . .
+RUN bundle install --without development test --jobs 2 --retry 3
+COPY . /app
 
-# This is a hack for the container's broken locale settings and can be removed
-# if a better solution is found
-ENV RUBYOPT="-KU -E utf-8:utf-8"
-ENTRYPOINT ["./run.sh"]
+RUN mkdir -p /home/appuser && \
+  useradd appuser -u 1001 --user-group --home /home/appuser && \
+  chown -R appuser:appuser /app && \
+  chown -R appuser:appuser /home/appuser
+
+USER 1001

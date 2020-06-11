@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: prison-visits-integration-tests
+  namespace: prison-visits-booking-staging
+  labels:
+    app: prison-visits-integration-tests
+spec:
+  backoffLimit: 2
+  template:
+    spec:
+      containers:
+      - name: integration-tests
+        image: 754256621582.dkr.ecr.eu-west-2.amazonaws.com/prison-visits-booking/prison-visits-integration-tests:latest
+        command: ['sh', '-c', "bundle exec rspec spec/integration"]
+        resources:
+          limits:
+            memory: "1500Mi"
+            cpu: "150m"
+        envFrom:
+          - configMapRef:
+              name: prison-visits-integration-tests-shared-environment
+          - secretRef:
+              name: prison-visits-integration-tests-secrets
+      restartPolicy: Never

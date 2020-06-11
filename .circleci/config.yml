@@ -5,11 +5,81 @@ references:
   github_team_name_slug: &github_team_name_slug
     GITHUB_TEAM_NAME_SLUG: prison-visits-booking
 
+  deploy_container_config: &deploy_container_config
+    docker:
+      - image: ${ECR_ENDPOINT}/cloud-platform/tools:circleci
+        environment:
+          AWS_DEFAULT_REGION: eu-west-2
+
   test_container_config: &test_container_config
     docker:
       - image: circleci/ruby:2.6.3-node-browsers
         environment:
           START_PAGE: "https://prison-visits-public-staging.apps.live-1.cloud-platform.service.justice.gov.uk/en/request"
+
+  install_gpg: &install_gpg
+    run:
+      name: Install GPG
+      command: |
+        apk add \
+          --no-cache \
+          --no-progress \
+          gnupg
+
+  configure_gpg: &configure_gpg
+    run:
+      name: Configure GPG
+      command: |
+        echo "${GPG_PRIVATE_KEY}" | base64 -d | gpg --batch --allow-secret-key-import --import
+
+  decrypt_secrets: &decrypt_secrets
+    run:
+      name: Decrypt secrets file
+      command: |
+        gpg --export-ownertrust > /tmp/ownertrust.txt
+        echo $GPG_KEY_ID:1 >> /tmp/ownertrust.txt
+        gpg --import-ownertrust /tmp/ownertrust.txt
+        gpgconf --kill gpg-agent
+        gpg-agent --daemon --allow-preset-passphrase
+        /usr/libexec/gpg-preset-passphrase --preset --passphrase $GPG_PASSPHRASE $GPG_KEY_KEYGRIP_ID
+        git-crypt unlock
+
+  install_aws_cli: &install_aws_cli
+    run:
+      name: Set up aws
+      command: |
+        sudo apt-get update
+        sudo apt-get --assume-yes install python3-pip
+        sudo pip3 install awscli
+
+  build_docker_image: &build_docker_image
+    run:
+      name: Build prison-visits-integration-tests docker image
+      command: |
+        export BUILD_DATE=$(date -Is) >> $BASH_ENV
+        source $BASH_ENV
+        docker build \
+          --build-arg VERSION_NUMBER=${CIRCLE_BUILD_NUM} \
+          --build-arg COMMIT_ID=${CIRCLE_SHA1} \
+          --build-arg BUILD_DATE=${BUILD_DATE} \
+          --build-arg BUILD_TAG=${CIRCLE_BRANCH} \
+          -f Dockerfile -t app  .
+
+  push_docker_image: &push_docker_image
+    run:
+      name: Push prison-visits-integration-tests docker image
+      command: |
+        login="$(aws ecr get-login --region eu-west-2 --no-include-email)"
+        ${login}
+        docker tag app "${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
+        docker push "${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
+        if [ "${CIRCLE_BRANCH}" == "master" ]; then
+          docker tag app "${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:latest"
+          docker push "${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:latest"
+        fi
+      environment:
+        <<: *github_team_name_slug
+        REPONAME: prison-visits-integration-tests
 
 version: 2
 jobs:
@@ -36,6 +106,19 @@ jobs:
           paths:
             - vendor/bundle
 
+  build_and_push_docker_image:
+    <<: *defaults
+    <<: *test_container_config
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/repo
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - *install_aws_cli
+      - *build_docker_image
+      - *push_docker_image
+
   smoke_test:
     <<: *defaults
     <<: *test_container_config
@@ -49,6 +132,38 @@ jobs:
           command: |
             bundle exec rspec spec/smoke
 
+  remote_integration_tests:
+    <<: *deploy_container_config
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/repo
+      - *install_gpg
+      - *configure_gpg
+      - *decrypt_secrets
+      - run:
+          name: Kubectl deployment staging setup
+          command: |
+            setup-kube-auth
+            kubectl config use-context staging
+      - deploy:
+          name: Run integration tests in k8s cluster
+          command: |
+            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/job.yaml
+            kubectl delete job prison-visits-integration-tests --ignore-not-found
+            kubectl apply --record=false -f ./deploy
+            echo "Waiting for jobs for a maximum of 10 minutes"
+            if ! kubectl wait --for=condition=complete -f deploy/job.yaml --timeout=600s ; then
+              echo "Failed pods:"
+              kubectl get pods --field-selector=status.phase=Failed
+              FIRST_POD=$(kubectl get pods --field-selector=status.phase=Failed -o=name | head -n 1)
+              echo "Logs for failed pod $FIRST_POD:"
+                kubectl logs $FIRST_POD
+              exit 1
+            fi
+          environment:
+            <<: *github_team_name_slug
+
 workflows:
   version: 2
   build_and_smoke_test:
@@ -57,3 +172,19 @@ workflows:
       - smoke_test:
           requires:
             - install_dependencies
+      - build_and_push_docker_image:
+          requires:
+            - smoke_test
+      - remote_integration_tests:
+          requires:
+            - build_and_push_docker_image
+  regularily:
+    triggers:
+      - schedule:
+          cron: 17 8,12,16 * * *
+          filters:
+            branches:
+              only:
+                circle-integration-tests
+    jobs:
+      - remote_integration_tests
